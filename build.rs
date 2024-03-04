@@ -2,19 +2,26 @@ use std::path::Path;
 
 fn main() {
     // // Define the CUDA source files directory
-    // let clad_dir = Path::new("CLAD");
+    let clad_dir = Path::new("src/CLAD/src");
+    let clad_include_dir = Path::new("src/CLAD/include");
     
-    // // Find all CUDA files recursively within the CLAD directory
-    // let cuda_files = find_cuda_files(clad_dir);
+    // Find all CUDA files recursively within the CLAD directory
+    let cuda_files = find_cuda_files(clad_dir);
 
-    // // Compile each CUDA file individually
-    // println!("cargo:warning={:?}", cuda_files);
+    // Compile each CUDA file individually
+    println!("cargo:warning= Source files: {:?}", cuda_files);
     
     let mut nvcc = cc::Build::new();
     nvcc.cuda(true);
-    nvcc.cudart("static");
-    nvcc.clone().file("src/test.cu").compile("clad");
+    nvcc.cargo_debug(true);
+    // nvcc.cudart("static");
+    nvcc.include(clad_include_dir);
+    nvcc.clone().files(cuda_files). //files are compiled separately, linked in the end.
+    // nvcc.file("src/clad.cu").
+    // nvcc.file("src/test.cu").
+    compile("clad");
 
+    println!("cargo:rerun-if-changed=src/CLAD");
     
 }
 

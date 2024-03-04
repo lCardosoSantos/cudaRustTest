@@ -1,5 +1,5 @@
 [package]
-name = "cudaTest"
+name = "cuda_test"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 
 [build-dependencies]
-cc = "1.0"
+cc = { version = "^1.0.70", features = ["parallel"] } #grumpkin version

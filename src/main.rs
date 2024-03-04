@@ -1,5 +1,4 @@
 
-#[link(name = "clad")]
 extern "C" {
     fn clad();
 }
