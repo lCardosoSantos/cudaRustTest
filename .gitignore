@@ -1,1 +1,5 @@
 /target
+/**/filegen.sh
+*.o
+.fpTest/
+.frTest/

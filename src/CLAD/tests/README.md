@@ -13,4 +13,3 @@ Feature stand-alone tests that can be ran outside of Rust.
 
 <!-- TODO: Check if this is valid-->
 
-Files in the subdirectories expose their function to cargo.

@@ -1,5 +1,5 @@
 #include "fr.cuh" 
 
-extern "C" __device__ bool fr_nonzero(const fr_t &x){
+__device__ bool nonzero(const fr_t &x){
     #warning Function not implemented: fr_nonzero
 }
