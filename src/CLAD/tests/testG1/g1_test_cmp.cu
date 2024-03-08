@@ -1,4 +1,4 @@
-#include "g1_test.cuh"
+#include "testG1.cuh"
 
 /**
  * @brief Test for point copy
@@ -8,8 +8,8 @@
  * 
  * @return bool 
  */
-extern "C"__global__ bool G1TestCpy(bool result, testval_t *testval, const size_t testsize){
-    #warning Function not implemented: G1TestCpy
+ __global__ void G1TestCpy(bool result, testval_t *testval, const size_t testsize){
+    //#warning Function not implemented: G1TestCpy
 }
 
 /**
@@ -20,8 +20,8 @@ extern "C"__global__ bool G1TestCpy(bool result, testval_t *testval, const size_
  * 
  * @return bool 
  */
-extern "C"__global__ bool G1TestIsPoint(bool result, testval_t *testval, const size_t testsize){
-    #warning Function not implemented: G1TestIsPoint
+ __global__ void G1TestIsPoint(bool result, testval_t *testval, const size_t testsize){
+    //#warning Function not implemented: G1TestIsPoint
 }
 
 /**
@@ -32,8 +32,8 @@ extern "C"__global__ bool G1TestIsPoint(bool result, testval_t *testval, const s
  * 
  * @return bool 
  */
-extern "C"__global__ bool G1TestEq(bool result, testval_t *testval, const size_t testsize){
-    #warning Function not implemented: G1TestEq
+ __global__ void G1TestEq(bool result, testval_t *testval, const size_t testsize){
+    //#warning Function not implemented: G1TestEq
 }
 
 /**
@@ -44,8 +44,8 @@ extern "C"__global__ bool G1TestEq(bool result, testval_t *testval, const size_t
  * 
  * @return bool 
  */
-extern "C"__global__ bool G1TestNeq(bool result, testval_t *testval, const size_t testsize){
-    #warning Function not implemented: G1TestNeq
+ __global__ void G1TestNeq(bool result, testval_t *testval, const size_t testsize){
+    //#warning Function not implemented: G1TestNeq
 }
 
 /**
@@ -56,7 +56,7 @@ extern "C"__global__ bool G1TestNeq(bool result, testval_t *testval, const size_
  * 
  * @return bool 
  */
-extern "C"__global__ bool G1TestIsInf(bool result, testval_t *testval, const size_t testsize){
-    #warning Function not implemented: G1TestIsInf
+ __global__ void G1TestIsInf(bool result, testval_t *testval, const size_t testsize){
+    //#warning Function not implemented: G1TestIsInf
 }
 

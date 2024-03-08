@@ -1,6 +1,6 @@
-#include "g1_test.cuh"
+#include "testG1.cuh"
 
 
-extern "C"__global__ bool fname(bool result, testval_t *testval, const size_t testsize){
-    #warning Function not implemented: fname
+ __global__ void fname(bool result, testval_t *testval, const size_t testsize){
+    //#warning Function not implemented: fname
 }

@@ -1,5 +1,5 @@
 #include "g1.cuh"
 
 void g1(){
-    printf("g1\n");
+    printf("called from cuda g1\n");
 }

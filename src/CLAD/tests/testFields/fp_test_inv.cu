@@ -11,6 +11,6 @@
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldInv(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldInv
+ __global__ void TestFieldInv(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldInv
 }

@@ -1,5 +1,6 @@
 /target
 /**/filegen.sh
 *.o
-.fpTest/
-.frTest/
+.buildlog
+scratch.cu
+.vscode/*

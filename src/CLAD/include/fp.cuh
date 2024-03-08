@@ -1,7 +1,40 @@
+#pragma once
+
 #include<stdint.h>
 #include<stdio.h>
+#include <cassert>
+#include <cstdint>
 
-typedef uint64_t fp_t[4]; 
+
+class fp_t {
+    uint64_t _[4];
+
+    public:
+
+    fp_t(const fp_t &) = default;
+
+    __host__ __device__ fp_t(uint64_t x = 0)
+    {
+        _[0] = x;
+        _[1] = 0;
+        _[2] = 0;
+        _[3] = 0;
+    }
+
+    __host__ __device__ uint64_t &operator[](int i)
+    {
+        assert(0 <= i);
+        assert(i <= 3);
+        return _[i];
+    }
+
+    __host__ __device__ uint64_t  operator[](int i) const
+    {
+        assert(0 <= i);
+        assert(i <= 3);
+        return _[i];
+    }
+};
 
 __device__ __host__ void fromUint64(fp_t &z, const uint64_t *x);
 __device__ __host__ void toUint64(uint64_t *z, const fp_t &x);

@@ -1,5 +1,5 @@
 #include "fr.cuh" 
 
 inline __device__ void x12(fr_t &z){
-    #warning Function not implemented: fr_x12
+    //#warning Function not implemented: fr_x12
 }

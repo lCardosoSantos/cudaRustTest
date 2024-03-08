@@ -9,8 +9,8 @@
  * @return __global__ 
  */
 template<typename T>
-__global__ bool TestFieldSub(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldSub
+ __global__ void TestFieldSub(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldSub
 }
 
 /**
@@ -24,8 +24,8 @@ __global__ bool TestFieldSub(bool result, T *testval, const size_t testsize){
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldSubDistributiveLeft(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldSubDistributiveLeft
+ __global__ void TestFieldSubDistributiveLeft(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldSubDistributiveLeft
 }
 
 /**
@@ -39,6 +39,6 @@ __global__ bool TestFieldSubDistributiveLeft(bool result, T *testval, const size
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldSubDistributiveRight(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldSubDistributiveRight
+ __global__ void TestFieldSubDistributiveRight(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldSubDistributiveRight
 }

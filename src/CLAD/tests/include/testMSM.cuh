@@ -4,7 +4,7 @@
 
 #include "util_test.cuh"
 
-extern "C"__global__ void testMSM(); //TODO: Define the parameters for testMSM
+extern "C" __global__ void testMSM(); //TODO: Define the parameters for testMSM
                                      //TODO: More tests for MSM
 
 

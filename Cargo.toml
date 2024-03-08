@@ -9,3 +9,9 @@ edition = "2021"
 
 [build-dependencies]
 cc = { version = "^1.0.70", features = ["parallel"] } #grumpkin version
+
+[features]
+msm_primitive_test = []
+
+[[test]]
+name = "test_msm"

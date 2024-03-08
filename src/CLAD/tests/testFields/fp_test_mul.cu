@@ -14,8 +14,8 @@
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldMulConst(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldMulConst
+ __global__ void TestFieldMulConst(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldMulConst
 }
 
 /**
@@ -28,8 +28,8 @@ __global__ bool TestFieldMulConst(bool result, T *testval, const size_t testsize
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldMul(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldMul
+ __global__ void TestFieldMul(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldMul
 }
 
 /**
@@ -43,8 +43,8 @@ __global__ bool TestFieldMul(bool result, T *testval, const size_t testsize){
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldCommutativeMul(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldCommutativeMul
+ __global__ void TestFieldCommutativeMul(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldCommutativeMul
 }
 
 /**
@@ -58,6 +58,6 @@ __global__ bool TestFieldCommutativeMul(bool result, T *testval, const size_t te
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldAssociativeMul(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldAssociativeMul
+ __global__ void TestFieldAssociativeMul(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldAssociativeMul
 }

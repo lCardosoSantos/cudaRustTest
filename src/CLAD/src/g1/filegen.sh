@@ -25,7 +25,7 @@ for i in "${!functions[@]}"; do
     echo "" >> "$filename"
 
     echo "$flag $funcname($inp){" >> "$filename"
-    echo "    #warning Function not implemented: $funcname" >> "$filename"
+    echo "    //#warning Function not implemented: $funcname" >> "$filename"
     echo "}" >> "$filename"
 
     echo "File $filename created."

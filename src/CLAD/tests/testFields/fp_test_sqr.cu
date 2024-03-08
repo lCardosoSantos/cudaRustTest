@@ -10,8 +10,8 @@
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldSqr(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldSqr
+ __global__ void TestFieldSqr(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldSqr
 }
 
 /**
@@ -25,6 +25,6 @@ __global__ bool TestFieldSqr(bool result, T *testval, const size_t testsize){
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldSqr2(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldSqr2
+ __global__ void TestFieldSqr2(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldSqr2
 }

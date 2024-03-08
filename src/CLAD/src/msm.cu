@@ -1,16 +1,18 @@
-#include "clad.cuh"
-#include<stdio.h>
+#include <stdio.h>
+#include "msm.cuh"
 
-extern "C" void clad(){
-    printf("CLAD\n");
-    fp();
-    fr();
-    g1();
-}
+extern "C" void msm(g1a_t *out, const g1a_t *points, const fr_t *scalars, const size_t nPoints){
+    
+    printf("g1ar_t *out, const = %p\n", out);
+    printf("g1ar_t *points, = %p\n", points);
+    printf("const fr_t *scalars, = %p\n", scalars);
+    printf("const size_t nPoints= %d\n", nPoints);
 
-extern "C" void clad_msm(g1a_t *out, const g1a_t *points, const fr_t *scalars, const size_t nPoints){
+    out->x[0]= 1024;
+    out->y[1] = 2048;
 
     return;
+
 }
 
 

@@ -4,9 +4,9 @@
 #include <stdio.h>
 
 //Declaration shorthand
-#define TESTFUN(X) __global__ bool X(bool result, testval_t *testval, const size_t testsize)
+#define TESTFUN(X)  __global__ void X(bool result, testval_t *testval, const size_t testsize)
 
-#define TESTFUN_T(X) template<typename T> __global__ bool X(bool result, T *testval, const size_t testsize)
+#define TESTFUN_T(X) template<typename T>  __global__ void X(bool result, T *testval, const size_t testsize)
 
 //Controls printing
 extern int verbosity;

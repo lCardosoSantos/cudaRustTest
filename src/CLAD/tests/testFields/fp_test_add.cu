@@ -9,8 +9,8 @@
  * @return void
  */
 template<typename T>
-__global__ bool TestFieldAdd(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldAdd
+ __global__ void TestFieldAdd(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldAdd
 }
 
 /**
@@ -27,8 +27,8 @@ __global__ bool TestFieldAdd(bool result, T *testval, const size_t testsize){
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldAddsub(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldAddsub
+ __global__ void TestFieldAddsub(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldAddsub
 }
 
 
@@ -43,8 +43,8 @@ __global__ bool TestFieldAddsub(bool result, T *testval, const size_t testsize){
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldCommutativeAdd(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldCommutativeAdd
+ __global__ void TestFieldCommutativeAdd(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldCommutativeAdd
 }
 
 /**
@@ -58,8 +58,8 @@ __global__ bool TestFieldCommutativeAdd(bool result, T *testval, const size_t te
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldAssociativeAdd(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldAssociativeAdd
+ __global__ void TestFieldAssociativeAdd(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldAssociativeAdd
 }
 
 /**
@@ -73,8 +73,8 @@ __global__ bool TestFieldAssociativeAdd(bool result, T *testval, const size_t te
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldAddDistributiveLeft(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldAddDistributiveLeft
+ __global__ void TestFieldAddDistributiveLeft(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldAddDistributiveLeft
 }
 
 /**
@@ -88,6 +88,6 @@ __global__ bool TestFieldAddDistributiveLeft(bool result, T *testval, const size
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldAddDistributiveRight(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldAddDistributiveRight
+ __global__ void TestFieldAddDistributiveRight(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldAddDistributiveRight
 }

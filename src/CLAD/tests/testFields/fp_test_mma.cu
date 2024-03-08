@@ -12,6 +12,6 @@
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldMMA(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldMMA
+ __global__ void TestFieldMMA(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldMMA
 }

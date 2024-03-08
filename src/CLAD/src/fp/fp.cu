@@ -1,5 +1,5 @@
 #include "fp.cuh"
 
 void fp(){
-    printf("fp\n");
+    printf("called from cuda fp\n");
 }

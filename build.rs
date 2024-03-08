@@ -4,10 +4,15 @@ fn main() {
     // // Define the CUDA source files directory
     let clad_dir = Path::new("src/CLAD/src");
     let clad_include_dir = Path::new("src/CLAD/include");
+
     
     // Find all CUDA files recursively within the CLAD directory
-    let cuda_files = find_cuda_files(clad_dir);
-
+    let mut cuda_files = find_cuda_files(clad_dir);
+    
+    if cfg!(feature="msm_primitive_test") {
+        cuda_files.append(&mut find_cuda_files(Path::new("src/CLAD/tests/testFields")));
+        cuda_files.append(&mut find_cuda_files(Path::new("src/CLAD/tests/testG1")));
+    }
     // Compile each CUDA file individually
     println!("cargo:warning= Source files: {:?}", cuda_files);
     
@@ -16,6 +21,13 @@ fn main() {
     nvcc.cargo_debug(true);
     // nvcc.cudart("static");
     nvcc.include(clad_include_dir);
+
+    if cfg!(feature="msm_primitive_test"){ 
+        let clad_test_include_dir = Path::new("src/CLAD/tests/include");
+        nvcc.include(clad_test_include_dir);
+    }
+
+
     nvcc.clone().files(cuda_files). //files are compiled separately, linked in the end.
     // nvcc.file("src/clad.cu").
     // nvcc.file("src/test.cu").

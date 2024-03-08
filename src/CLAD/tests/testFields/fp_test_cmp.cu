@@ -16,6 +16,6 @@
  * @return bool 
  */
 template<typename T>
-__global__ bool TestFieldCmp(bool result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldCmp
+ __global__ void TestFieldCmp(bool result, T *testval, const size_t testsize){
+    //#warning Function not implemented: TestFieldCmp
 }

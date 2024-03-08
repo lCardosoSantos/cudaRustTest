@@ -1,4 +1,4 @@
-#include "g1_test.cuh"
+#include "testG1.cuh"
 
 /**
  * @brief Test operation over G1 using KAT and self consistency:
@@ -20,8 +20,8 @@
  * 
  * @return bool 
  */
-extern "C"__global__ bool G1TestKAT(bool result, testval_t *testval, const size_t testsize){
-    #warning Function not implemented: G1TestKAT
+__global__ void G1TestKAT(bool result, testval_t *testval, const size_t testsize){
+    //#warning Function not implemented: G1TestKAT
 }
 
 /**
@@ -30,6 +30,6 @@ extern "C"__global__ bool G1TestKAT(bool result, testval_t *testval, const size_
  * 
  * @return void 
  */
-extern "C"__global__ bool G1TestFibonacci(bool result, testval_t *testval, const size_t testsize){
-    #warning Function not implemented: G1TestFibonacci
+__global__ void G1TestFibonacci(bool result, testval_t *testval, const size_t testsize){
+    //#warning Function not implemented: G1TestFibonacci
 }

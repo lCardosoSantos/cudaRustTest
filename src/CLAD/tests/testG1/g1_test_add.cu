@@ -1,4 +1,4 @@
-#include "g1_test.cuh"
+#include "testG1.cuh"
 
 
 /**
@@ -9,8 +9,8 @@
  * 
  * @return bool 
  */
-extern "C"__global__ bool G1TestAdd(bool result, testval_t *testval, const size_t testsize){
-    #warning Function not implemented: G1TestAdd
+ __global__ void G1TestAdd(bool result, testval_t *testval, const size_t testsize){
+    //#warning Function not implemented: G1TestAdd
 }
 
 /**
@@ -21,6 +21,6 @@ extern "C"__global__ bool G1TestAdd(bool result, testval_t *testval, const size_
  * 
  * @return bool 
  */
-extern "C"__global__ bool G1TestAddsub(bool result, testval_t *testval, const size_t testsize){
-    #warning Function not implemented: G1TestAddsub
+ __global__ void G1TestAddsub(bool result, testval_t *testval, const size_t testsize){
+    //#warning Function not implemented: G1TestAddsub
 }
