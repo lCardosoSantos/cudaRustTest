@@ -1,6 +1,22 @@
+#include <unistd.h>
 #include "testUtil.cuh"
 
-int verbosity;
+__managed__ enum verbosityLevel verbosity;
+__managed__ bool stdout_isatty;
+__managed__ bool errorOnce;
+
+
+/**
+ * @brief Initializes parameters for testing
+ * 
+ * @param verbosityLevel 
+ */
+void init(enum verbosityLevel vl, bool _errorOnce = false){
+    verbosity = vl;
+    stdout_isatty = isatty(fileno(stdout)); //Done here since isatty() cannot be called from the device.
+    errorOnce = _errorOnce;
+}
+
 
 
 //TODO: This function may not be necessary anymore. Or the function pointers can be pointers to instantiations of the test functions
@@ -20,3 +36,6 @@ extern "C" bool runTest( bool(*testfunc)(bool, void*, const size_t),
         //Encapsulates the testfunction kernel call so the tests
         //can be called from Rust 
         }
+
+
+

@@ -8,7 +8,7 @@ extern "C" {
 //for testint
 pub fn scratchboard() {
     unsafe {
-        scratchboard_cuda(); // Call the CUDA function
+        scratchboard_cuda(); // Call the CUDA function used for testing.
     }
 }
 

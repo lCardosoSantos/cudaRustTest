@@ -21,6 +21,14 @@ class fp_t {
         _[3] = 0;
     }
 
+    __host__ __device__ fp_t(uint64_t x, uint64_t y, uint64_t z, uint64_t a)
+    {
+        _[0] = x;
+        _[1] = y;
+        _[2] = z;
+        _[3] = a;
+    }
+
     __host__ __device__ uint64_t &operator[](int i)
     {
         assert(0 <= i);
