@@ -20,6 +20,15 @@ class fr_t {
         _[2] = 0;
         _[3] = 0;
     }
+    
+    __host__ __device__ fr_t(uint64_t x, uint64_t y, uint64_t z, uint64_t a)
+    {
+        _[0] = x;
+        _[1] = y;
+        _[2] = z;
+        _[3] = a;
+    }
+
 
     __host__ __device__ uint64_t &operator[](int i)
     {
@@ -66,9 +75,8 @@ inline  __device__ __host__ void one(fr_t &z);
  __device__ bool iszero(const fr_t &x);
  __device__ bool isone(const fr_t &x);
 
-#ifdef DEBUG
- extern "C" __device__ void print(const char *s, const fr_t &x);
-#endif
+__host__  void field_printh(const char *s, const fr_t &x, FILE *out = stdout);
+__device__ void field_print(const char *s, const fr_t &x);
 
 
 //Test for integration

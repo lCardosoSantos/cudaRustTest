@@ -72,9 +72,10 @@ __device__ bool nonzero(const fp_t &x);
 __device__ bool iszero(const fp_t &x);
 __device__ bool isone(const fp_t &x);
 
-#ifdef DEBUG
-extern "C"  __device__ void print(const char *s, const fp_t &x);
-#endif
+// #ifdef DEBUG
+__host__   void field_printh(const char *s, const fp_t &x, FILE *out = stdout);
+__device__ void field_print(const char *s, const fp_t &x);
+// #endif
 
 //Test for integration
 void fp();

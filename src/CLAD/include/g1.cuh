@@ -51,8 +51,12 @@ __device__ __host__ void g1p_inf(g1p_t &p);
 __device__ __host__ void g1p_gen(g1p_t &p);
 
 // #ifdef DEBUG
-__device__ __host__ void g1p_print(const char *s, const g1p_t &p, FILE *out = stdout);
-__device__ __host__ void g1a_print(const char *s, const g1a_t &a, FILE *out = stdout);
+__host__ void g1p_printh(const char *s, const g1p_t &p, FILE *out = stdout);
+__device__ void g1p_print(const char *s, const g1p_t &p);
+
+
+__host__ void g1a_printh(const char *s, const g1a_t &a, FILE *out = stdout);
+__device__ void g1a_print(const char *s, const g1a_t &a);
 // #endif
 
 //test for integration
