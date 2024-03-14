@@ -3,15 +3,55 @@
 #include "fp.cuh"
 #include "fr.cuh"
 
-//efinition g1 affine
-typedef struct {
-    fp_t x, y;
-} g1a_t;
+// A pair of residues representing a G1 point in affine coordinates
 
-//Tefinition g1 Projective
-typedef struct {
+struct g1a_t {
+    fp_t x, y;
+
+    __host__ __device__ g1a_t(const fp_t &x, const fp_t &y)
+    : x(x)
+    , y(y)
+    {}
+
+    __host__ __device__ g1a_t()
+    {
+        x.set_zero();
+        y.set_zero();
+    }
+};
+
+// A triple of residues representing a G1 point in homogeneous projective coordinates
+
+struct g1p_t {
     fp_t x, y, z;
-} g1p_t;
+
+    __host__ __device__ g1p_t()
+    {
+        x.set_zero();
+        y.set_one();
+        z.set_zero();
+    }
+
+    __host__ __device__ g1p_t(const fp_t &x, const fp_t &y, const fp_t &z)
+    : x(x)
+    , y(y)
+    , z(z)
+    {}
+
+    __host__ __device__ g1p_t(const g1a_t &a)
+    : x(a.x)
+    , y(a.y)
+    {
+        z.set_one();
+
+        if (fp_is0(x) && fp_is0(y))
+        {
+            y.set_one();
+            z.set_zero();
+        }
+    }
+};
+
 
 __device__ __host__ void g1a_fromUint64(g1a_t &a, const uint64_t *x, const uint64_t *y);
 __device__ __host__ void g1a_fromFp(g1a_t &a, const fp_t &x, const fp_t &y);
@@ -59,5 +99,5 @@ __host__ void g1a_printh(const char *s, const g1a_t &a, FILE *out = stdout);
 __device__ void g1a_print(const char *s, const g1a_t &a);
 // #endif
 
-//test for integration
-void g1();
+// //test for integration
+// void g1();
