@@ -27,10 +27,10 @@
         if(g1p_neq(l, r)){
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
-                fprintf(stderr, "%d: FAILED\n", i);
-                g1p_print("x:   ", x, stderr);
-                g1p_print("2x:  ", l, stderr);
-                g1p_print("3x: ", r, stderr);
+                printf("%d: FAILED\n", i);
+                g1p_print("x:   ", x);
+                g1p_print("2x:  ", l);
+                g1p_print("3x: ", r);
             }
         }
         ++count;

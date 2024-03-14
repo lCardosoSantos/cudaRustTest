@@ -15,19 +15,19 @@
  */
 template<typename T>
  __global__ void TestFieldKAT(bool result, T *testval, const size_t testsize){
-    //#warning Function not implemented: TestFieldKAT
+    #warning Function not implemented: TestFieldKAT
 }
 
-/**
- * @brief Test addition and subtraction in Fp using a fibonacci sequence (chain
- * dependency) from 1 to testsize and back
- * 
- * @param testval 
- * @param testsize 
- * 
- * @return bool 
- */
-template<typename T>
- __global__ void TestFieldFibonacci(bool result, T *testval, const size_t testsize){
-    //#warning Function not implemented: TestFieldFibonacci
-}
+// /**
+//  * @brief Test addition and subtraction in Fp using a fibonacci sequence (chain
+//  * dependency) from 1 to testsize and back
+//  * 
+//  * @param testval 
+//  * @param testsize 
+//  * 
+//  * @return bool 
+//  */
+// template<typename T>
+//  __global__ void TestFieldFibonacci(bool result, T *testval, const size_t testsize){
+//     #warning Function not implemented: TestFieldFibonacci
+// }

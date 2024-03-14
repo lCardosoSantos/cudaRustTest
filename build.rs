@@ -25,6 +25,7 @@ fn main() {
     if cfg!(feature="msm_primitive_test"){ 
         let clad_test_include_dir = Path::new("src/CLAD/tests/include");
         nvcc.include(clad_test_include_dir);
+        nvcc.define("RUST_TEST", None);
     }
 
 

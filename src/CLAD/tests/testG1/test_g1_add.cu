@@ -27,10 +27,10 @@
         if(g1p_neq(l, r)){
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
-                fprintf(stderr, "%d: FAILED\n", i);
-                g1p_print("x:   ", x, stderr);
-                g1p_print("2x:  ", l, stderr);
-                g1p_print("x+x: ", r, stderr);
+                printf("%d: FAILED\n", i);
+                g1p_print("x:   ", x);
+                g1p_print("2x:  ", l);
+                g1p_print("x+x: ", r);
             }
         }
         ++count;
@@ -70,14 +70,14 @@
         if(g1p_neq(p2, a) || g1p_neq(q2, b)){
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
-                fprintf(stderr, "%d: FAILED\n", i);
-                fprintf(stderr, "addsub(addsub((p,q))) -> (a,b); a==2p, b==2q \n");
-                g1p_print("p:   ", p, stderr);
-                g1p_print("q:   ", q, stderr);
-                g1p_print("a:   ", a, stderr);
-                g1p_print("b:   ", b, stderr);
-                g1p_print("2p:  ", p2, stderr);
-                g1p_print("2q:  ", q2, stderr);
+                printf("%d: FAILED\n", i);
+                printf("addsub(addsub((p,q))) -> (a,b); a==2p, b==2q \n");
+                g1p_print("p:   ", p);
+                g1p_print("q:   ", q);
+                g1p_print("a:   ", a);
+                g1p_print("b:   ", b);
+                g1p_print("2p:  ", p2);
+                g1p_print("2q:  ", q2);
             }
         }
 

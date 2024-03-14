@@ -5,7 +5,7 @@
 
 //Constant tests
 TESTFUN_T(TestFieldKAT);
-TESTFUN_T(TestFieldFibonacci);
+// TESTFUN_T(TestFieldFibonacci);
 
 //Linear time tests
 
@@ -13,7 +13,7 @@ TESTFUN_T(TestFieldCmp);
 TESTFUN_T(TestFieldMulConst);
 TESTFUN_T(TestFieldAdd);
 TESTFUN_T(TestFieldSub);
-TESTFUN_T(TestFieldAddsub);
+// TESTFUN_T(TestFieldAddsub);//Not implemented
 TESTFUN_T(TestFieldSqr);
 TESTFUN_T(TestFieldMul);
 TESTFUN_T(TestFieldInv);

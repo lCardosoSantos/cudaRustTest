@@ -1,4 +1,9 @@
 #include "testFields.cuh"
+#include "fp.cuh"
+#include "fr.cuh"
+
+using namespace fp;
+using namespace fr;
 
 /**
  * @brief Test for addition in Fp
@@ -10,27 +15,32 @@
  */
 template<typename T>
  __global__ void TestFieldAdd(bool result, T *testval, const size_t testsize){
-    //#warning Function not implemented: TestFieldAdd
-}
+    TEST_PROLOGUE;
 
-/**
- * @brief Test for the fp_addsub kernel.
- * 
- * Tests using the following properties:
- * 
- * f(x,y) = (x+y,x-y)
- * f(f(x,y)) = (2x, 2y)
- * 
- * @param testval s
- * @param testsize 
- * 
- * @return bool 
- */
-template<typename T>
- __global__ void TestFieldAddsub(bool result, T *testval, const size_t testsize){
-    //#warning Function not implemented: TestFieldAddsub
-}
+    //var declare
+    T x, l, r;
 
+    for (int i=0; pass && i<testsize; i++){
+        cpy(x, testval[i]);
+        x2(l, x);
+        add(l, l, x);
+        x3(r, x);
+
+        if(neq(l,r)){
+            pass = false;
+            if (verbosity >= PRINT_MESSAGES){
+                printf("%d: FAILED\n", i);
+                field_print("x    : ",  x);
+                field_print("2x+x : ",  l);    
+                field_print("3x   : ",  r);
+            }
+        }
+        ++count;
+        if (errorOnce) break;
+    }
+
+    TEST_EPILOGUE;
+}
 
 /**
  * @brief Test for the commutative property of addition in Fp
@@ -44,7 +54,36 @@ template<typename T>
  */
 template<typename T>
  __global__ void TestFieldCommutativeAdd(bool result, T *testval, const size_t testsize){
-    //#warning Function not implemented: TestFieldCommutativeAdd
+    TEST_PROLOGUE;
+
+    //var declare
+    T x, y;
+
+    for (int i=0; pass && i<testsize; i++){
+        for (int j; pass && j<testsize; j++){
+            cpy(x, testval[i]);
+            cpy(y, testval[j]);
+
+            add(x, x, testval[j]); // x + y
+            add(y, y, testval[i]); // y + x
+
+            if(neq(x, y)){
+                pass = false;
+                if (verbosity >= PRINT_MESSAGES){
+                    printf("%d,%d: FAILED\n", i, j);
+                    field_print("x = ",  testval[i]);
+                    field_print("y = ",  testval[j]);
+                    field_print("x+y = ",  x);
+                    field_print("y+x = ",  y);
+                    }
+                }
+            ++count;
+            if (errorOnce) break;
+        }
+        if (errorOnce && !pass) break;
+    }
+
+    TEST_EPILOGUE;
 }
 
 /**
@@ -59,7 +98,45 @@ template<typename T>
  */
 template<typename T>
  __global__ void TestFieldAssociativeAdd(bool result, T *testval, const size_t testsize){
-    //#warning Function not implemented: TestFieldAssociativeAdd
+        TEST_PROLOGUE;
+
+    //var declare
+    T a, b, c;
+
+    for (int i=0; pass && i<testsize; i++){
+        for (int j; pass && j<testsize; j++){
+            for (int k; pass && k<testsize; k++){
+                cpy(a, testval[i]);  // x
+                cpy(b, testval[j]);  // y
+                cpy(c, testval[i]);  // x
+
+                add(a, a, testval[j]);  // x + y
+                add(a, a, testval[k]);  // (x + y) + z
+
+                add(b, b, testval[k]);  // y + z
+                add(c, c, b);           // x + (y + z)
+
+                if(neq(a, c)){
+                    pass = false;
+                    if (verbosity >= PRINT_MESSAGES){
+                        printf("%d,%d,d: FAILED\n", i, j, k);
+                        field_print("x = ",  testval[i]);
+                        field_print("y = ",  testval[j]);
+                        field_print("z = ",  testval[k]);
+                        field_print("(x+y)+z = ",  a);
+                        field_print("x+(y+z) = ",  c);
+                        }
+                    }
+                ++count;
+                if (errorOnce) break;
+            }
+            if (errorOnce && !pass) break;
+        }
+    if (errorOnce && !pass) break;
+            
+    }
+
+    TEST_EPILOGUE;
 }
 
 /**
@@ -74,7 +151,54 @@ template<typename T>
  */
 template<typename T>
  __global__ void TestFieldAddDistributiveLeft(bool result, T *testval, const size_t testsize){
-    //#warning Function not implemented: TestFieldAddDistributiveLeft
+    TEST_PROLOGUE;
+
+    T a, b, c, u, v, w;    
+
+    for (int i=0; i<TESTVALS; i++) {
+        cpy(a, testval[i]);
+
+        for (int j=0; j<TESTVALS; j++) {
+            cpy(b, testval[j]);
+
+            for (int k=j; k<TESTVALS; k++) {
+                cpy(c, testval[k]);
+
+                cpy(u, a);
+                mul(u, u, b);   // ab
+
+                cpy(v, a);
+                mul(v, v, c);   // ac
+
+                add(u, u, v);   // ab+ac
+
+                cpy(v, a);
+                cpy(w, b);
+                add(w, w, c);   // b+c
+                mul(v, v, w);   // a(b+c)
+
+                if (neq(u, v)) {
+                    pass = false;
+
+                    if (verbosity >= PRINT_MESSAGES) {
+                        printf("%d,%d: FAILED: inconsistent result\n", i, j);
+                        field_print("a = ", testval[i]);
+                        field_print("b = ", testval[j]);
+                        field_print("c = ", testval[k]);
+                        field_print("ab+ac = ", u);
+                        field_print("a(b+c) = ", v);
+                    }
+                }
+                ++count;
+                if (errorOnce) break;
+            }
+            if (errorOnce && !pass) break;
+        }
+        if (errorOnce && !pass) break;
+    }
+
+
+    TEST_EPILOGUE;
 }
 
 /**
@@ -89,5 +213,49 @@ template<typename T>
  */
 template<typename T>
  __global__ void TestFieldAddDistributiveRight(bool result, T *testval, const size_t testsize){
-    //#warning Function not implemented: TestFieldAddDistributiveRight
+    
+    TEST_EPILOGUE;
+
+    T    a, b, c, u, v;
+
+    for (int i=0; i<TESTVALS; i++) {
+        cpy(a, testval[i]);
+
+        for (int j=i; j<TESTVALS; j++) {
+            cpy(b, testval[j]);
+
+            for (int k=0; k<TESTVALS; k++) {
+                cpy(c, testval[k]);
+
+                cpy(u, a);
+                mul(u, u, c);   // ac
+
+                cpy(v, b);
+                mul(v, v, c);   // bc
+
+                add(u, u, v);   // ac+bc
+
+                cpy(v, a);
+                add(v, v, b);   // a+b
+                mul(v, v, c);   // (a+b)c
+
+                if (fp_neq(u, v)) {
+                    pass = false;
+
+                    printf("%d,%d, %d: FAILED: inconsistent result\n", i, j, k);
+                    field_print("a = ",  testval[i]);
+                    field_print("b = ",  testval[j]);
+                    field_print("c = ",  testval[k]);
+                    field_print("ac+bc = ",  u);
+                    field_print("(a+b)c = ",  v);
+                }
+                ++count;
+                if (errorOnce) break;
+            }
+            if (errorOnce && !pass) break;
+        }
+        if (errorOnce && !pass) break;
+    }
+
+    TEST_PROLOGUE
 }

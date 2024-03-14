@@ -28,9 +28,9 @@ __global__ void G1TestFibonacci(bool *result, testval_t *testval, const size_t t
         if (g1p_neq(p, t)) {
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
-                fprintf(stderr, "%d: FAILED\n", i);
-                g1p_print("p:  ", p, stderr);
-                g1p_print("t:  ", t, stderr);
+                printf("%d: FAILED\n", i);
+                g1p_print("p:  ", p);
+                g1p_print("t:  ", t);
             }
             if (errorOnce) break;
             ++count;
@@ -45,9 +45,9 @@ __global__ void G1TestFibonacci(bool *result, testval_t *testval, const size_t t
         if (g1p_neq(q, t)) {
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
-                fprintf(stderr, "%d: FAILED\n", i);
-                g1p_print("q:  ", q, stderr);
-                g1p_print("t:  ", t, stderr);
+                printf("%d: FAILED\n", i);
+                g1p_print("q:  ", q);
+                g1p_print("t:  ", t);
             }
             if (errorOnce) break;
             ++count;

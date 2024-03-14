@@ -1,4 +1,9 @@
 #include "testFields.cuh"
+#include "fp.cuh"
+#include "fr.cuh"
+
+using namespace fp;
+using namespace fr;
 
 /**
  * @brief Test for subtraction in Fp.
@@ -8,37 +13,67 @@
  * @param testval 
  * @return __global__ 
  */
-template<typename T>
- __global__ void TestFieldSub(bool result, T *testval, const size_t testsize){
-    //#warning Function not implemented: TestFieldSub
+template <typename T> 
+__global__ void TestFieldSub(bool result, T *testval, const size_t testsize) {
+    TEST_PROLOGUE;
+
+    T x, l, r;
+
+    // 2x == 3x - x
+
+    for (int i = 0; pass && i < testsize; i++) {
+        cpy(x, testval[i]);
+
+        x2(l, x);
+
+        x3(r, x);
+        sub(r, r, x);
+
+        if (fp_neq(l, r)) {
+            pass = false;
+
+            printf("%d: FAILED\n", i);
+            field_print("x    : ", x);
+            field_print("2x   : ", l);
+            field_print("3x-x : ", r);
+        }
+        ++count;
+        if (errorOnce) break;
+    }
+
+    TEST_EPILOGUE;
 }
 
-/**
- * @brief Check the distributive property of multiplication in Fp (left of subtraction):
- * 
- * a(b-c) = ab-ac
- * 
- * @param testval 
- * @param testsize 
- * 
- * @return bool 
- */
-template<typename T>
- __global__ void TestFieldSubDistributiveLeft(bool result, T *testval, const size_t testsize){
-    //#warning Function not implemented: TestFieldSubDistributiveLeft
-}
+// /**
+//  * @brief Check the distributive property of multiplication in Fp (left of subtraction):
+//  * 
+//  * a(b-c) = ab-ac
+//  * 
+//  * @param testval 
+//  * @param testsize 
+//  * 
+//  * @return bool 
+//  */
+// template<typename T>
+//  __global__ void TestFieldSubDistributiveLeft(bool result, T *testval, const size_t testsize){
+//     TEST_PROLOGUE;
 
-/**
- * @brief Check the distributive property of multiplication in Fp (right of subtraction):
- * 
- * (a-b)c = ac-bc
- * 
- * @param testval 
- * @param testsize 
- * 
- * @return bool 
- */
-template<typename T>
- __global__ void TestFieldSubDistributiveRight(bool result, T *testval, const size_t testsize){
-    //#warning Function not implemented: TestFieldSubDistributiveRight
-}
+//     TEST_EPILOGUE;
+// }
+
+// /**
+//  * @brief Check the distributive property of multiplication in Fp (right of subtraction):
+//  * 
+//  * (a-b)c = ac-bc
+//  * 
+//  * @param testval 
+//  * @param testsize 
+//  * 
+//  * @return bool 
+//  */
+// template<typename T>
+//  __global__ void TestFieldSubDistributiveRight(bool result, T *testval, const size_t testsize){
+//     TEST_PROLOGUE;
+
+//     TEST_EPILOGUE;
+// }

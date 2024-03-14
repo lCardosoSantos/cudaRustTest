@@ -20,10 +20,10 @@
         if(g1p_neq(a, b)){
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
-                fprintf(stderr, "%d: FAILED\n", i);
-                fprintf(stderr, "a == b \n", i);
-                g1p_print("a:   ", a, stderr);
-                g1p_print("b:   ", b, stderr);
+                printf("%d: FAILED\n", i);
+                printf("a == b \n", i);
+                g1p_print("a:   ", a);
+                g1p_print("b:   ", b);
             }
         }
         ++count;
@@ -66,10 +66,10 @@
         if(!g1p_eq(a, b)){
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
-                fprintf(stderr, "%d: FAILED\n", i);
-                fprintf(stderr, "a == b \n", i);
-                g1p_print("a:   ", a, stderr);
-                g1p_print("b:   ", b, stderr);
+                printf("%d: FAILED\n", i);
+                printf("a == b \n", i);
+                g1p_print("a:   ", a);
+                g1p_print("b:   ", b);
             }
         }
         ++count;
@@ -99,10 +99,10 @@
         if(!g1p_neq(a, b)){
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
-                fprintf(stderr, "%d: FAILED\n", i);
-                fprintf(stderr, "a != b \n", i);
-                g1p_print("a:   ", a, stderr);
-                g1p_print("b:   ", b, stderr);
+                printf("%d: FAILED\n", i);
+                printf("a != b \n", i);
+                g1p_print("a:   ", a);
+                g1p_print("b:   ", b);
             }
         }
         ++count;
@@ -129,8 +129,8 @@
     if(!g1p_isInf(a)){
         pass = false;
         if (verbosity >= PRINT_MESSAGES){
-            fprintf(stderr, "%d: FAILED\n", 0);
-            fprintf(stderr, "isInf(inf) = True \n");
+            printf("%d: FAILED\n", 0);
+            printf("isInf(inf) = True \n");
         }
 
     }

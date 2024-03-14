@@ -28,11 +28,11 @@
             if(g1p_neq(a, b)){
                 pass = false;
                 if (verbosity >= PRINT_MESSAGES){
-                    fprintf(stderr, "%d.%d: FAILED\n", i, j);
-                    fprintf(stderr, "sum == mult \n");
-                    g1p_print("x:   ", x, stderr);
-                    g1p_print("sum:   ", a, stderr);
-                    g1p_print("mul:   ", b, stderr);
+                    printf("%d.%d: FAILED\n", i, j);
+                    printf("sum == mult \n");
+                    g1p_print("x:   ", x);
+                    g1p_print("sum:   ", a);
+                    g1p_print("mul:   ", b);
                 }
             ++count;
             if (errorOnce) break;
