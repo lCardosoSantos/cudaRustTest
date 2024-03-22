@@ -1,4 +1,7 @@
 #include "testG1.cuh"
+#include "fr.cuh"
+
+using namespace fr;
 
 /**
  * @brief Test addition and multiplication using a fibonacci sequence (cascading
@@ -15,11 +18,11 @@ __global__ void G1TestFibonacci(bool *result, testval_t *testval, const size_t t
     g1p_inf(p); // p  = 0
     g1p_gen(q); // q  = G
 
-    zero(k);
-    one(l);
+    k.set_zero();
+    k.set_one();;
 
     for (int i=0; pass && i<100; i++){
-        add(k,l);
+        add(k, k,l);
         g1p_add(p, p, q); // p += q
 
         g1p_gen(t);
@@ -36,7 +39,7 @@ __global__ void G1TestFibonacci(bool *result, testval_t *testval, const size_t t
             ++count;
         }
 
-        add(l, k);
+        add(l, l, k);
         g1p_add(q, q, p);  // q += p
 
         g1p_gen(t);

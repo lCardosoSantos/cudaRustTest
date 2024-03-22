@@ -21,7 +21,7 @@
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 printf("%d: FAILED\n", i);
-                printf("a == b \n", i);
+                printf("a == b \n");
                 g1p_print("a:   ", a);
                 g1p_print("b:   ", b);
             }
@@ -67,7 +67,7 @@
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 printf("%d: FAILED\n", i);
-                printf("a == b \n", i);
+                printf("a == b \n");
                 g1p_print("a:   ", a);
                 g1p_print("b:   ", b);
             }
@@ -100,7 +100,7 @@
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 printf("%d: FAILED\n", i);
-                printf("a != b \n", i);
+                printf("a != b \n");
                 g1p_print("a:   ", a);
                 g1p_print("b:   ", b);
             }
@@ -121,7 +121,7 @@
  * @return bool 
  */
  __global__ void G1TestIsInf(bool *result, testval_t *testval, const size_t testsize){
-        TEST_PROLOGUE;
+    TEST_PROLOGUE;
 
     g1p_t a;
     g1p_inf(a);

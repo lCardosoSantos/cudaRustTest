@@ -16,7 +16,7 @@ using namespace fr;
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldInv(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldInv(bool &result, T *testval, const size_t testsize){
     TEST_PROLOGUE;
 
     //var declare
@@ -29,7 +29,7 @@ template<typename T>
         mul(a, z, x); //y = x^-1 * x *x
 
 
-        if(neq(x,a)){
+        if(ne(x,a)){
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 printf("%d: FAILED\n", i);

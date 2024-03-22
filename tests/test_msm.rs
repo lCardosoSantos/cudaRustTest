@@ -3,25 +3,78 @@
 
 extern crate cuda_test;
 
+
 mod tests{
+
+    #[cfg(feature = "msm_primitive_test")]
+    extern "C"{
+        fn run_fr_tests();
+    }
+
+    #[cfg(feature = "msm_primitive_test")]
+    extern "C"{
+        fn run_fp_tests();
+    }
+
+    #[cfg(feature = "msm_primitive_test")]
+    extern "C"{
+        fn run_g1_tests();
+    }
+
+    
+    extern "C"{
+        fn run_msm_tests();
+    }
+
+
+    #[cfg(feature = "msm_primitive_test")]
+    pub fn call_run_fr_tests(){
+        println!("Calling CUDA run_fr_tests()");
+        println!("--\n");
+        unsafe {run_fr_tests()};
+    }
+
+    #[cfg(feature = "msm_primitive_test")]
+    pub fn call_run_fp_tests(){
+        println!("Calling CUDA run_fp_tests()");
+        println!("--\n");
+        unsafe {run_fp_tests()};
+    }
+
+    #[cfg(feature = "msm_primitive_test")]
+    pub fn call_run_g1_tests(){
+        println!("Calling CUDA run_g1_tests()");
+        println!("--\n");
+        unsafe {run_g1_tests()};
+    }
+    
+    pub fn call_run_MSM_tests(){
+        println!("Calling CUDA run_msm_tests()");
+        println!("--\n");
+        unsafe {run_msm_tests()};
+    }
+
     #[test]
     fn base_test(){
-        println!("base test");
-        cuda_test::msm::scratchboard();
+        // cuda_test::msm::scratchboard();
+        call_run_MSM_tests();
         assert!(false);
     }
 
     #[cfg(feature = "msm_primitive_test")]
     #[test]
-    fn testFields(){
-        println!("testFileds");
+    fn test_fields(){
+
+        call_run_fp_tests();
+        call_run_fr_tests();
         assert!(false);
     }
     
     #[cfg(feature = "msm_primitive_test")]
     #[test]
-    fn testEllipticCurve(){
-        println!("testEllipticCurve");
+    fn test_elliptic_curve(){
+
+        call_run_g1_tests();
         assert!(false);
     }
 

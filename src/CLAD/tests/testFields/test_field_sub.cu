@@ -14,7 +14,7 @@ using namespace fr;
  * @return __global__ 
  */
 template <typename T> 
-__global__ void TestFieldSub(bool result, T *testval, const size_t testsize) {
+__global__ void TestFieldSub(bool &result, T *testval, const size_t testsize) {
     TEST_PROLOGUE;
 
     T x, l, r;
@@ -29,7 +29,7 @@ __global__ void TestFieldSub(bool result, T *testval, const size_t testsize) {
         x3(r, x);
         sub(r, r, x);
 
-        if (fp_neq(l, r)) {
+        if (fp_ne(l, r)) {
             pass = false;
 
             printf("%d: FAILED\n", i);
@@ -55,7 +55,7 @@ __global__ void TestFieldSub(bool result, T *testval, const size_t testsize) {
 //  * @return bool 
 //  */
 // template<typename T>
-//  __global__ void TestFieldSubDistributiveLeft(bool result, T *testval, const size_t testsize){
+//  __global__ void TestFieldSubDistributiveLeft(bool &result, T *testval, const size_t testsize){
 //     TEST_PROLOGUE;
 
 //     TEST_EPILOGUE;
@@ -72,7 +72,7 @@ __global__ void TestFieldSub(bool result, T *testval, const size_t testsize) {
 //  * @return bool 
 //  */
 // template<typename T>
-//  __global__ void TestFieldSubDistributiveRight(bool result, T *testval, const size_t testsize){
+//  __global__ void TestFieldSubDistributiveRight(bool &result, T *testval, const size_t testsize){
 //     TEST_PROLOGUE;
 
 //     TEST_EPILOGUE;

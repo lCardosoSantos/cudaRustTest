@@ -1,4 +1,6 @@
 #pragma once
+#pragma diag_suppress 4
+
 #include<stdio.h>
 #include "fp.cuh"
 #include "fr.cuh"

@@ -14,7 +14,7 @@
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldKAT(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldKAT(bool &result, T *testval, const size_t testsize){
     #warning Function not implemented: TestFieldKAT
 }
 
@@ -28,6 +28,6 @@ template<typename T>
 //  * @return bool 
 //  */
 // template<typename T>
-//  __global__ void TestFieldFibonacci(bool result, T *testval, const size_t testsize){
+//  __global__ void TestFieldFibonacci(bool &result, T *testval, const size_t testsize){
 //     #warning Function not implemented: TestFieldFibonacci
 // }

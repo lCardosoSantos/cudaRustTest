@@ -20,7 +20,7 @@ using namespace fr;
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldMulConst(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldMulConst(bool &result, T *testval, const size_t testsize){
     #define ITER 100
     TEST_PROLOGUE;
      // 2*4 == 8
@@ -40,7 +40,7 @@ template<typename T>
 
             x8(x8, x8);
 
-            if (fp_neq(x2x4, x8)) {
+            if (ne(x2x4, x8)) {
                 pass = false;
 
                 printf("%d: FAILED: inconsistent result\n", j);
@@ -80,7 +80,7 @@ template<typename T>
             x8(x8, x8);
             x8(x8, x8);
 
-            if (fp_neq(x2, x4) || fp_neq(x2, x8)) {
+            if (ne(x2, x4) || ne(x2, x8)) {
                 pass = false;
 
                 printf("%d: FAILED: inconsistent result\n", j);
@@ -106,12 +106,12 @@ template<typename T>
             T x1;
             cpy(x1, x3x4);
 
-            fp_x3(x3x4, x3x4);
+            x3(x3x4, x3x4);
             x4(x3x4, x3x4);
 
-            fp_x12(x12, x12);
+            x12(x12, x12);
 
-            if (fp_neq(x3x4, x12)) {
+            if (ne(x3x4, x12)) {
                 pass = false;
 
                 printf("%d: FAILED: inconsistent result\n", j);
@@ -137,16 +137,16 @@ template<typename T>
             cpy(x1, l);
 
             x2(x2, l);
-            fp_x3(x3, l);
+            x3(x3, l);
             x8(x8, l);
-            fp_x12(x12, l);
+            x12(x12, l);
 
-            fp_add(l, x12, x8);
+            add(l, x12, x8);
 
-            fp_add(r, x3, x2);
+            add(r, x3, x2);
             x4(r, r);
 
-            if (fp_neq(l, r)) {
+            if (ne(l, r)) {
                 pass = false;
 
                 printf("%d: FAILED: inconsistent result\n", i);
@@ -171,18 +171,18 @@ template<typename T>
 
             cpy(x1, l);
 
-            fp_x3(l, l);
-            fp_x3(l, l);
-            fp_x3(l, l);
+            x3(l, l);
+            x3(l, l);
+            x3(l, l);
             x2(l, l);
             x4(l, l);
             x8(l, l);
 
-            fp_x12(r, r);
-            fp_x12(r, r);
-            fp_x12(r, r);
+            x12(r, r);
+            x12(r, r);
+            x12(r, r);
 
-            if (fp_neq(l, r)) {
+            if (ne(l, r)) {
                 pass = false;
 
                 printf("%d: FAILED: inconsistent result\n", i);
@@ -207,7 +207,7 @@ template<typename T>
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldMul(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldMul(bool &result, T *testval, const size_t testsize){
     TEST_PROLOGUE;
 
     //var declare
@@ -246,7 +246,7 @@ template<typename T>
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldCommutativeMul(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldCommutativeMul(bool &result, T *testval, const size_t testsize){
     TEST_PROLOGUE;
 
     //var declare
@@ -260,7 +260,7 @@ template<typename T>
             mul(x, x, testval[i]);
             mul(y, y, testval[j]);
 
-            if(neq(x,y)){
+            if(ne(x,y)){
                 pass = false;
                 if (verbosity >= PRINT_MESSAGES){
                     printf("%d: FAILED\n", i);
@@ -290,7 +290,7 @@ template<typename T>
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldAssociativeMul(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldAssociativeMul(bool &result, T *testval, const size_t testsize){
     TEST_PROLOGUE;
 
     // var declare
@@ -310,7 +310,7 @@ template<typename T>
                 mul(b, b, testval[k]); // y * z
                 mul(c, c, b);          // x * (y * z)
 
-                if (neq(a, c)) {
+                if (ne(a, c)) {
                     pass = false;
                     if (verbosity >= PRINT_MESSAGES) {
                         printf("%d: FAILED\n", i);

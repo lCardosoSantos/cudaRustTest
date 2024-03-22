@@ -17,17 +17,17 @@ using namespace fr;
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldSqr(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldSqr(bool &result, T *testval, const size_t testsize){
     TEST_PROLOGUE;
 
-    const fp_t _1  = {1, 0, 0, 0, 0, 0}, 
-               _2  = {2, 0, 0, 0, 0, 0}, 
-               _4  = {4, 0, 0, 0, 0, 0}, 
-               _6  = {6, 0, 0, 0, 0, 0},
-               _16 = {16, 0, 0, 0, 0, 0}, 
-               _36 = {36, 0, 0, 0, 0, 0};
+    const T _1  = {1, 0, 0, 0}, 
+               _2  = {2, 0, 0, 0}, 
+               _4  = {4, 0, 0, 0}, 
+               _6  = {6, 0, 0, 0},
+               _16 = {16, 0, 0, 0}, 
+               _36 = {36, 0, 0, 0};
 
-    fp_t x, xsqr, x2, x4, x8, x12, l, r;
+    T x, xsqr, x2, x4, x8, x12, l, r;
 
     // (x+n)^2 == x^2 + 2nx + n^2
 
@@ -49,7 +49,7 @@ template<typename T>
         add(r, xsqr, x2);
         add(r, r, _1);
 
-        if (neq(l, r)) {
+        if (ne(l, r)) {
             pass = false;
             if (verbosity >= PRINT_MESSAGES) {
                 printf("%d: FAILED\n", i);
@@ -70,7 +70,7 @@ template<typename T>
         add(r, xsqr, x4);
         add(r, r, _4);
 
-        if (neq(l, r)) {
+        if (ne(l, r)) {
             pass = false;
             if (verbosity >= PRINT_MESSAGES) {
                 printf("%d: FAILED\n", i);
@@ -91,7 +91,7 @@ template<typename T>
         add(r, xsqr, x8);
         add(r, r, _16);
 
-        if (neq(l, r)) {
+        if (ne(l, r)) {
             pass = false;
             if (verbosity >= PRINT_MESSAGES) {
                 printf("%d: FAILED\n", i);
@@ -112,7 +112,7 @@ template<typename T>
         add(r, xsqr, x12);
         add(r, r, _36);
 
-        if (neq(l, r)) {
+        if (ne(l, r)) {
             pass = false;
             if (verbosity >= PRINT_MESSAGES) {
                 printf("%d: FAILED\n", i);
@@ -140,19 +140,19 @@ template<typename T>
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldSqr2(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldSqr2(bool &result, T *testval, const size_t testsize){
     TEST_PROLOGUE;
 
     T x, xsqr, x2, y, l, r;
 
     // (x+y)^2 == x^2 + 2xy + y^2
 
-    for (int i = 0; pass && i < TESTVALS; i++) {
+    for (int i = 0; pass && i < testsize; i++) {
         cpy(x, testval[i]);
         sqr(xsqr, x);
         x2(x2, x);
 
-        for (int j = i; pass && j < TESTVALS; j++) {
+        for (int j = i; pass && j < testsize; j++) {
 
             // l = (x+y)^2
             add(l, x, y);
@@ -163,7 +163,7 @@ template<typename T>
             mul(r, r, y);  // 2xy+y^2
             add(r, xsqr, r);
 
-            if (neq(l, r)) {
+            if (ne(l, r)) {
                 pass = false;
                 if (verbosity >= PRINT_MESSAGES) {
                     printf("%d: FAILED\n", i);

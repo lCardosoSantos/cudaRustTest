@@ -14,7 +14,7 @@ using namespace fr;
  * @return void
  */
 template<typename T>
- __global__ void TestFieldAdd(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldAdd(bool &result, T *testval, const size_t testsize){
     TEST_PROLOGUE;
 
     //var declare
@@ -26,7 +26,7 @@ template<typename T>
         add(l, l, x);
         x3(r, x);
 
-        if(neq(l,r)){
+        if(ne(l,r)){
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 printf("%d: FAILED\n", i);
@@ -53,7 +53,7 @@ template<typename T>
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldCommutativeAdd(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldCommutativeAdd(bool &result, T *testval, const size_t testsize){
     TEST_PROLOGUE;
 
     //var declare
@@ -67,7 +67,7 @@ template<typename T>
             add(x, x, testval[j]); // x + y
             add(y, y, testval[i]); // y + x
 
-            if(neq(x, y)){
+            if(ne(x, y)){
                 pass = false;
                 if (verbosity >= PRINT_MESSAGES){
                     printf("%d,%d: FAILED\n", i, j);
@@ -97,15 +97,15 @@ template<typename T>
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldAssociativeAdd(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldAssociativeAdd(bool &result, T *testval, const size_t testsize){
         TEST_PROLOGUE;
 
     //var declare
     T a, b, c;
 
     for (int i=0; pass && i<testsize; i++){
-        for (int j; pass && j<testsize; j++){
-            for (int k; pass && k<testsize; k++){
+        for (int j=0; pass && j<testsize; j++){
+            for (int k=0; pass && k<testsize; k++){
                 cpy(a, testval[i]);  // x
                 cpy(b, testval[j]);  // y
                 cpy(c, testval[i]);  // x
@@ -116,7 +116,7 @@ template<typename T>
                 add(b, b, testval[k]);  // y + z
                 add(c, c, b);           // x + (y + z)
 
-                if(neq(a, c)){
+                if(ne(a, c)){
                     pass = false;
                     if (verbosity >= PRINT_MESSAGES){
                         printf("%d,%d,d: FAILED\n", i, j, k);
@@ -150,18 +150,18 @@ template<typename T>
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldAddDistributiveLeft(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldAddDistributiveLeft(bool &result, T *testval, const size_t testsize){
     TEST_PROLOGUE;
 
     T a, b, c, u, v, w;    
 
-    for (int i=0; i<TESTVALS; i++) {
+    for (int i=0; i<testsize; i++) {
         cpy(a, testval[i]);
 
-        for (int j=0; j<TESTVALS; j++) {
+        for (int j=0; j<testsize; j++) {
             cpy(b, testval[j]);
 
-            for (int k=j; k<TESTVALS; k++) {
+            for (int k=j; k<testsize; k++) {
                 cpy(c, testval[k]);
 
                 cpy(u, a);
@@ -177,7 +177,7 @@ template<typename T>
                 add(w, w, c);   // b+c
                 mul(v, v, w);   // a(b+c)
 
-                if (neq(u, v)) {
+                if (ne(u, v)) {
                     pass = false;
 
                     if (verbosity >= PRINT_MESSAGES) {
@@ -212,19 +212,19 @@ template<typename T>
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldAddDistributiveRight(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldAddDistributiveRight(bool &result, T *testval, const size_t testsize){
     
-    TEST_EPILOGUE;
+    TEST_PROLOGUE
 
-    T    a, b, c, u, v;
+    T a, b, c, u, v;
 
-    for (int i=0; i<TESTVALS; i++) {
+    for (int i=0; i<testsize; i++) {
         cpy(a, testval[i]);
 
-        for (int j=i; j<TESTVALS; j++) {
+        for (int j=i; j<testsize; j++) {
             cpy(b, testval[j]);
 
-            for (int k=0; k<TESTVALS; k++) {
+            for (int k=0; k<testsize; k++) {
                 cpy(c, testval[k]);
 
                 cpy(u, a);
@@ -239,7 +239,7 @@ template<typename T>
                 add(v, v, b);   // a+b
                 mul(v, v, c);   // (a+b)c
 
-                if (fp_neq(u, v)) {
+                if (fp_ne(u, v)) {
                     pass = false;
 
                     printf("%d,%d, %d: FAILED: inconsistent result\n", i, j, k);
@@ -257,5 +257,5 @@ template<typename T>
         if (errorOnce && !pass) break;
     }
 
-    TEST_PROLOGUE
+    TEST_EPILOGUE;
 }

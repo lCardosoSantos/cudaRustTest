@@ -10,9 +10,9 @@ using namespace fr;
  * @brief Test for the comparison function in Fp; checks for inconsistencies in the 
  * following properties:
  * 
- * eq(x,x) != neq(x,x)
- * neq(x,x) == false
- * neq(x,y) == true
+ * eq(x,x) != ne(x,x)
+ * ne(x,x) == false
+ * ne(x,y) == true
  * eq(x,x) == true
  * eq(x,y) == false
  * 
@@ -22,19 +22,20 @@ using namespace fr;
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldCmp(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldCmp(bool &result, T *testval, const size_t testsize){
     TEST_PROLOGUE;
     
+    T a, b;
     for (int i=0; pass && i<testsize; i++){
         cpy(a, testval[i]);
         memcpy(&b, &(testval[i]), sizeof(T));
         T c = {-1, -1, -1, -1};
 
-        if(eq(a, b) == neq(a, b)){
+        if(eq(a, b) == ne(a, b)){
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 fprintf(stderr, "%d: FAILED\n", i);
-                fprintf(stderr, "eq(x,x) != neq(x,x) \n", i);
+                fprintf(stderr, "eq(x,x) != ne(x,x) \n", i);
                 field_print("a:   ", a);
                 field_print("b:   ", b);
             }
@@ -42,11 +43,11 @@ template<typename T>
         ++count;
         if (errorOnce) break;
 
-        if(neq(a, b)){
+        if(ne(a, b)){
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 fprintf(stderr, "%d: FAILED\n", i);
-                fprintf(stderr, "neq(x,x)==false \n", i);
+                fprintf(stderr, "ne(x,x)==false \n", i);
                 field_print("a:   ", a);
                 field_print("b:   ", b);
             }
@@ -54,11 +55,11 @@ template<typename T>
         ++count;
         if (errorOnce) break;
 
-        if(!neq(a, c)){
+        if(!ne(a, c)){
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 fprintf(stderr, "%d: FAILED\n", i);
-                fprintf(stderr, "neq(x,y) == true \n", i);
+                fprintf(stderr, "ne(x,y) == true \n", i);
                 field_print("a:   ", a);
                 field_print("c:   ", c);
             }

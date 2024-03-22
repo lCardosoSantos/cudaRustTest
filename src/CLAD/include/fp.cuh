@@ -18,20 +18,25 @@ class fp_t {
 
     // Conversions to and from internal (Montgomery) format
 
-    __host__ __device__ fp_t(uint64_t x0 = 0, uint64_t x1 = 0, uint64_t x2 = 0, uint64_t x3 = 0);
+    __host__ __device__ fp_t(uint64_t x0=0, uint64_t x1 = 0, uint64_t x2 = 0, uint64_t x3 = 0); //x0 not 
 
-    __host__ __device__ void to_uint64_t(uint64_t &x0, uint64_t &x1, uint64_t &x2, uint64_t &x3);
+     __device__ void to_uint64_t(uint64_t &z0, uint64_t &z1, uint64_t &z2, uint64_t &z3);
 
+    // Direct access to internal representation, for implementation convenience.
     __host__ __device__ void set_zero(){
         //temporary setter for testing
-        *this = fp_t(0);
-        // fp_t();
+        _[0] = 0;
+        _[1] = 0;
+        _[2] = 0;
+        _[3] = 0;
     }
 
     __host__ __device__ void set_one(){
         //temporary setter for testing
-        *this = fp_t(1);
-        // fp_t(1);
+        _[0] = 1;
+        _[1] = 0;
+        _[2] = 0;
+        _[3] = 0;
     }
 
     // Direct access to internal representation, for implementation convenience.
@@ -49,6 +54,15 @@ class fp_t {
         assert(i <= 3);
         return _[i];
     }
+
+    __device__ void print() const;
+
+
+    // Conversions to and from Montgomery format
+
+    __device__ void to_mont(uint64_t &z0, uint64_t &z1, uint64_t &z2, uint64_t &z3);
+    __device__ void from_mont(uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3);
+
 };
 
 __device__ __host__ void cpy(fp_t &z, const fp_t &x);
@@ -95,14 +109,14 @@ namespace fp {
     inline __device__ void x12(fp_t &z, const fp_t &x) { fp_x12(z, x); }
     inline __device__ void neg(fp_t &z, const fp_t &x) { fp_neg(z, x); }
 
-    inline __device__ __host__ bool eq(const fp_t &x, const fp_t &y) { fp_eq(x, y); }
-    inline __device__ __host__ bool ne(const fp_t &x, const fp_t &y) { fp_ne(x, y); }
+    inline __device__ __host__ bool eq(const fp_t &x, const fp_t &y) { return fp_eq(x, y); }
+    inline __device__ __host__ bool ne(const fp_t &x, const fp_t &y) { return fp_ne(x, y); }
 
-    inline __device__ __host__ bool operator==(const fp_t &x, const fp_t &y) { fp_eq(x, y); }
-    inline __device__ __host__ bool operator!=(const fp_t &x, const fp_t &y) { fp_ne(x, y); }
+    inline __device__ __host__ bool operator==(const fp_t &x, const fp_t &y) { return fp_eq(x, y); }
+    inline __device__ __host__ bool operator!=(const fp_t &x, const fp_t &y) { return fp_ne(x, y); }
 
-    inline __device__ __host__ bool is0(const fp_t &x) { fp_is0(x); }
-    inline __device__ __host__ bool is1(const fp_t &x) { fp_is1(x); }
+    inline __device__ __host__ bool is0(const fp_t &x) { return fp_is0(x); }
+    inline __device__ __host__ bool is1(const fp_t &x) { return fp_is1(x); }
 
 };
 
@@ -111,3 +125,9 @@ namespace fp {
 __host__   void field_printh(const char *s, const fp_t &x, FILE *out = stdout);
 __device__ void field_print(const char *s, const fp_t &x);
 // #endif
+
+#include "fp_redc.cuh"
+#include "fp_reduce4.cuh"
+#include "fp_reduce5.cuh"
+
+// vim: ts=4 et sw=4 si

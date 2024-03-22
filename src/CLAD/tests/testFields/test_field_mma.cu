@@ -18,11 +18,11 @@ using namespace fr;
  * @return bool 
  */
 template<typename T>
- __global__ void TestFieldMMA(bool result, T *testval, const size_t testsize){
+ __global__ void TestFieldMMA(bool &result, T *testval, const size_t testsize){
     TEST_PROLOGUE;
 
     //var declare
-    T u, v, w, x, y;
+    T t, u, v, w, x, y;
 
     for (int i = 0; pass && i < testsize; i++) {
         cpy(v, testval[i]);
@@ -38,7 +38,7 @@ template<typename T>
 
                     mma(y, v, w, x, y);
 
-                    if (neq(u, v)) {
+                    if (ne(u, v)) {
                         pass = false;
                         if (verbosity >= PRINT_MESSAGES) {
                             printf("%d %d %d %d: FAILED\n", i, j, k, l);
