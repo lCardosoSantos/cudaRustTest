@@ -14,4 +14,4 @@ cc = { version = "^1.0.70", features = ["parallel"] } #grumpkin version
 msm_primitive_test = []
 
 [[test]]
-name = "test_msm"
+name = "test_CUDA"

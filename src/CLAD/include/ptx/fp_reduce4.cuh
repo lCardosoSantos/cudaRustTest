@@ -8,6 +8,7 @@
 
 #include "ptx.cuh"
 
+//Full modular reduction
 __device__ __forceinline__ void fp_reduce4(
     uint64_t &z0, uint64_t &z1, uint64_t &z2, uint64_t &z3,
     uint64_t  x0, uint64_t  x1, uint64_t  x2, uint64_t  x3

@@ -32,4 +32,14 @@ TESTFUN_T(TestFieldAddDistributiveRight);
 TESTFUN_T(TestFieldSubDistributiveLeft);
 TESTFUN_T(TestFieldSubDistributiveRight);
 
+#include "../testFields/test_field_add.impl" 
+#include "../testFields/test_field_cmp.impl" 
+#include "../testFields/test_field_inv.impl" 
+#include "../testFields/test_field_KAT.impl" 
+#include "../testFields/test_field_mma.impl" 
+#include "../testFields/test_field_mul.impl" 
+#include "../testFields/test_field_sqr.impl" 
+#include "../testFields/test_field_sub.impl" 
+
+
 #endif

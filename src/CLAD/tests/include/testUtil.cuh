@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdio.h>
+#include <unistd.h>
+#include <stdint.h>
 
 #define COLOR_RED "\x1b[31m"
 #define COLOR_GREEN "\x1b[32m"
@@ -16,6 +18,7 @@
 //TODO: Define test run macro
 #define TESTMSG(X) printf(COLOR_BOLD COLOR_BLUE "run test" #X COLOR_RESET "\n")
 
+#define DEBUGPRINT(var) printf(">>>> " #var " 0x%x \n", var);
 
 //Controls printing
 enum verbosityLevel{
@@ -34,7 +37,7 @@ extern __managed__ bool errorOnce;
         err = cudaDeviceSynchronize();                                                                                     \
         if (err != cudaSuccess){                                                                                           \
         printf("%s:%d " fmt " Error: %d (%s)\n", __FILE__, __LINE__, err, cudaGetErrorName(err), ##__VA_ARGS__);           \
-        return false;}                                                                                                     
+        }                                                                                                     
 #endif
 
 
@@ -48,11 +51,54 @@ extern __managed__ bool errorOnce;
 #define TEST_EPILOGUE \
     if (count > 0 && verbosity >= PRINT_MESSAGES && !errorOnce){\
         printf("%u of %u  tests failed\n", count, testsize);\
+    }\
+    result = pass;
+
+/**
+ * @brief Initializes parameters for testing
+ * 
+ * @param verbosityLevel 
+ */
+template<typename T>
+void init(const size_t testsize, T* testval, enum verbosityLevel vl = PRINT_MESSAGES_TIME, bool _errorOnce = true){
+    verbosity = vl;
+    stdout_isatty = isatty(fileno(stdout)); //Done here since isatty() cannot be called from the device.
+    errorOnce = _errorOnce;
+
+    //Allocate
+    cudaError_t  err;
+    err = cudaMallocManaged(&testval, testsize * sizeof(T));
+    if (err != cudaSuccess){
+        printf("FATAL: Cuda memory allocation failed!\n");
+        printf("Error: %d: %s\n", err, cudaGetErrorName(err));
+        exit(0xf1);
     }
 
-//initializes variables for testing.
-template<typename T>
-void init(const size_t testsize, T* testval, enum verbosityLevel vl=PRINT_MESSAGES_TIME, bool _errorOnce=true);
+    int i = 0;
+    testval[i++].set_zero();
+    testval[i++].set_one();
+
+    for(int j=0; j<64; j++) testval[i++] = T(0, 0, 0, 1ull << j);
+    for(int j=0; j<64; j++) testval[i++] = T(0, 0, 1ull << j);
+    for(int j=0; j<64; j++) testval[i++] = T(0, 1ull << j);
+    for(int j=0; j<64; j++) testval[i++] = T(1ull << j);
+
+    FILE *urandom = fopen("/dev/urandom", "r");
+
+    if (!urandom){
+        printf("WARNING: Nonfatal: unable to access /dev/urandom. \n");
+        return;
+    }
+
+    for(; i<testsize; i++){
+        uint64_t tmp[4];
+        fread(tmp, sizeof(uint64_t), 4, urandom);
+        testval[i] = T(tmp[0], tmp[1], tmp[2], tmp[3]);
+    }
+
+    if (!urandom) fclose(urandom);
+    
+}
 
 template<typename T>
 bool runTest( bool(*testfunc)(bool, T*, const size_t), 

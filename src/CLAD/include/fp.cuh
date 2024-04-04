@@ -87,11 +87,11 @@ __device__ void fp_neg(fp_t &z, const fp_t &x);
 
 // Comparisons
 
-__device__ __host__ bool fp_eq(const fp_t &x, const fp_t &y);
-__device__ __host__ bool fp_ne(const fp_t &x, const fp_t &y);
+__device__  bool fp_eq(const fp_t &x, const fp_t &y);
+__device__  bool fp_ne(const fp_t &x, const fp_t &y);
 
-__device__ __host__ bool fp_is0(const fp_t &x);
-__device__ __host__ bool fp_is1(const fp_t &x);
+__device__  bool fp_is0(const fp_t &x);
+__device__  bool fp_is1(const fp_t &x);
 
 namespace fp {
 
@@ -109,14 +109,14 @@ namespace fp {
     inline __device__ void x12(fp_t &z, const fp_t &x) { fp_x12(z, x); }
     inline __device__ void neg(fp_t &z, const fp_t &x) { fp_neg(z, x); }
 
-    inline __device__ __host__ bool eq(const fp_t &x, const fp_t &y) { return fp_eq(x, y); }
-    inline __device__ __host__ bool ne(const fp_t &x, const fp_t &y) { return fp_ne(x, y); }
+    inline __device__  bool eq(const fp_t &x, const fp_t &y) { return fp_eq(x, y); }
+    inline __device__  bool ne(const fp_t &x, const fp_t &y) { return fp_ne(x, y); }
 
-    inline __device__ __host__ bool operator==(const fp_t &x, const fp_t &y) { return fp_eq(x, y); }
-    inline __device__ __host__ bool operator!=(const fp_t &x, const fp_t &y) { return fp_ne(x, y); }
+    inline __device__  bool operator==(const fp_t &x, const fp_t &y) { return fp_eq(x, y); }
+    inline __device__  bool operator!=(const fp_t &x, const fp_t &y) { return fp_ne(x, y); }
 
-    inline __device__ __host__ bool is0(const fp_t &x) { return fp_is0(x); }
-    inline __device__ __host__ bool is1(const fp_t &x) { return fp_is1(x); }
+    inline __device__  bool is0(const fp_t &x) { return fp_is0(x); }
+    inline __device__  bool is1(const fp_t &x) { return fp_is1(x); }
 
 };
 

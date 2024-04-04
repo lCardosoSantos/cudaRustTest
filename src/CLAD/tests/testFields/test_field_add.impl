@@ -34,9 +34,9 @@ template<typename T>
                 field_print("2x+x : ",  l);    
                 field_print("3x   : ",  r);
             }
-        }
         ++count;
         if (errorOnce) break;
+        }
     }
 
     TEST_EPILOGUE;

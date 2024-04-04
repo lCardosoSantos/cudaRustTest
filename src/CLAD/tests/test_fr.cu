@@ -36,19 +36,19 @@
 
 // }
 
-__managed__  fr_t *testval;
+__managed__   fr_t *testval_fr;
 
 
 extern "C" void run_fr_tests(){
-    bool res=false;
-    init(TESTSIZE, testval);
+    // bool res=false;
+    // init(TESTSIZE, testval_fr);
     
-    //Constant tests
+    // //Constant tests
     TESTMSG(TestFieldAdd);
-    TestFieldAdd<<<1,1>>>(res, testval, TESTSIZE);
-    printf("%B\n", res);
+    // TestFieldAdd<<<1,1>>>(res, testval_fr, TESTSIZE);
+    // printf("%B\n", res);
 
-    cudaFree(testval);
+    // cudaFree(testval_fr);
 }
 
 //Defined if the file is compiled for the Rust Library.

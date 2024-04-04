@@ -1,4 +1,5 @@
-.DAO/
+*.old
+.notes
 /target
 /**/filegen.sh
 *.o
