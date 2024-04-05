@@ -39,20 +39,20 @@
 // }
 
 __managed__  fp_t *testval_fp;
-__managed__ bool res; 
+__managed__ bool pass; 
 
 extern "C" void run_fp_tests(){
-    res=false;
+    pass=false;
     cudaError_t err;
     init(TESTSIZE, testval_fp);
     
-    //Constant tests
-    TESTMSG(TestFieldAdd);
-    TestFieldAdd<<<1,1>>>(res, testval_fp, TESTSIZE);
+    //Linear time tests
 
-    CUDASYNC("TestFieldAdd");
-    
-    printf("res = %d\n", res);
+    TEST_RUN(TestFieldCmp, pass, testval_fp, TESTSIZE);
+    TEST_RUN(TestFieldMulConst, pass, testval_fp, TESTSIZE);
+    TEST_RUN(TestFieldAdd, pass, testval_fp, TESTSIZE);
+    TEST_RUN(TestFieldSub, pass, testval_fp, TESTSIZE);
+
 
     cudaFree(testval_fp);
 }

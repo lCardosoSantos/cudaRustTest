@@ -10,16 +10,6 @@
 #define COLOR_RESET "\x1b[0m"
 #define COLOR_BOLD "\x1b[1m"
 
-//Declaration shorthand
-#define TESTFUN(X)  __global__ void X(bool *result, testval_t *testval, const size_t testsize)
-
-#define TESTFUN_T(X) template<typename T>  __global__ void X(bool &result, T *testval, const size_t testsize)
-
-//TODO: Define test run macro
-#define TESTMSG(X) printf(COLOR_BOLD COLOR_BLUE "run test" #X COLOR_RESET "\n")
-
-#define DEBUGPRINT(var) printf(">>>> " #var " 0x%x \n", var);
-
 //Controls printing
 enum verbosityLevel{
     NO_PRINT,
@@ -27,10 +17,34 @@ enum verbosityLevel{
     PRINT_MESSAGES_TIME
 };
 
-
 extern __managed__ enum verbosityLevel  verbosity;
 extern __managed__ bool stdout_isatty;
 extern __managed__ bool errorOnce;
+
+//Declaration shorthand
+#define TESTFUN(X)  __global__ void X(bool *result, testval_t *testval, const size_t testsize)
+
+#define TESTFUN_T(X) template<typename T>  __global__ void X(bool &result, T *testval, const size_t testsize)
+
+//TODO: Define test run macro
+#define TESTMSG(X) if (stdout_isatty){printf(COLOR_BLUE "run " X COLOR_RESET " "); }\
+                   else{ printf("run " X " "); }
+
+//Print test result
+#define PRINTPASS(pass) if (stdout_isatty){                                                             \
+    printf("--- %s\n", pass ? COLOR_GREEN "PASS" COLOR_RESET : COLOR_RED COLOR_BOLD "FAIL" COLOR_RESET);\
+    }else{                                        \
+    printf("--- %s\n", pass ?  "PASS" :  "FAIL" );\
+    }
+
+//shortcut for running the tests
+#define TEST_RUN(f, pass_var, testval_var, testsize_var) \
+    f<<<1,1>>>(pass_var, testval_var, testsize_var);\
+    CUDASYNC( #f );\
+    PRINTPASS(pass_var)
+
+#define DEBUGPRINT(var) printf(">>>> " #var " 0x%x \n", var);
+
 
 #ifndef CUDASYNC
     #define CUDASYNC(fmt, ...)                                                                                             \
@@ -44,8 +58,12 @@ extern __managed__ bool errorOnce;
 #define TEST_PROLOGUE \
     bool pass = true;\
     size_t count = 0;\
-    if (verbosity >= PRINT_MESSAGES)\
-        printf("> RUN %s\n", __func__);
+    if (verbosity >= PRINT_MESSAGES){\
+        if (stdout_isatty){\
+            printf(COLOR_BLUE "run %s" COLOR_RESET " ", __func__); \
+            }\
+        else{ printf("run %s ", __func__); }}
+        // printf("> RUN %s\n", __func__);
 
 
 #define TEST_EPILOGUE \
