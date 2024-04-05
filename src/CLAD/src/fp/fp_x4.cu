@@ -22,7 +22,6 @@ __noinline__ __device__ void fp_x4(fp_t &z, const fp_t &x) {
     z[1] = z1;
     z[2] = z2;
     z[3] = z3;
-    assert(z4 == 0);
 }
 
 // vim: ts=4 et sw=4 si

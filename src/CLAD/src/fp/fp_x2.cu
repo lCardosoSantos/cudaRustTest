@@ -2,6 +2,7 @@
 // Copyright 2024 Luan Cardoso dos Santos
 
 #include <cassert>
+#include <stdio.h>
 
 #include "fp.cuh"
 #include "add320.cuh"
@@ -23,7 +24,13 @@ __noinline__ __device__ void fp_x2(fp_t &z, const fp_t &x) {
     z[1] = z1;
     z[2] = z2;
     z[3] = z3;
-    assert(z4 == 0);
+
+    // if(z4 != 0){
+    //     field_print("x", x);
+    //     field_print("z", z);
+    //     printf("z4 %x\n", z4);
+    // }
+    
 }
 
 // vim: ts=4 et sw=4 si

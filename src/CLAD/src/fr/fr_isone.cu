@@ -1,5 +1,7 @@
 #include "fr.cuh" 
 
-__device__ bool isone(const fr_t &x){
-    //#warning Function not implemented: fr_isone
+__device__ bool fr_is1(const fr_t &x){
+    #warning Temporary implementation for testing
+    if(x[0] == 1 && (x[1] | x[2] | x[3]) == 0) return true;
+    return false;
 }

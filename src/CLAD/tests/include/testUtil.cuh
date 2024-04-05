@@ -20,6 +20,7 @@ enum verbosityLevel{
 extern __managed__ enum verbosityLevel  verbosity;
 extern __managed__ bool stdout_isatty;
 extern __managed__ bool errorOnce;
+extern __managed__ bool pass; 
 
 //Declaration shorthand
 #define TESTFUN(X)  __global__ void X(bool *result, testval_t *testval, const size_t testsize)
@@ -79,7 +80,7 @@ extern __managed__ bool errorOnce;
  * @param verbosityLevel 
  */
 template<typename T>
-void init(const size_t testsize, T* testval, enum verbosityLevel vl = PRINT_MESSAGES_TIME, bool _errorOnce = true){
+void init(const size_t testsize, T*& testval, enum verbosityLevel vl = PRINT_MESSAGES_TIME, bool _errorOnce = true){
     verbosity = vl;
     stdout_isatty = isatty(fileno(stdout)); //Done here since isatty() cannot be called from the device.
     errorOnce = _errorOnce;
@@ -117,7 +118,6 @@ void init(const size_t testsize, T* testval, enum verbosityLevel vl = PRINT_MESS
 
     if (!urandom) fclose(urandom);
     
-    printf(">INIT %d\n", i);
 }
 
 template<typename T>

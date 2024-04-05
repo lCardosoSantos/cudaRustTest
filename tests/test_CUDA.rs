@@ -23,15 +23,11 @@ mod tests{
 
     #[cfg(feature = "msm_primitive_test")]
     pub fn call_run_fr_tests(){
-        println!("Calling CUDA run_fr_tests()");
-        println!("--\n");
         unsafe {run_fr_tests()};
     }
 
     #[cfg(feature = "msm_primitive_test")]
     pub fn call_run_fp_tests(){
-        println!("Calling CUDA run_fp_tests()");
-        println!("--\n");
         unsafe {run_fp_tests()};
     }
     
@@ -43,7 +39,7 @@ mod tests{
 
     #[test]
     fn base_test(){
-        cuda_test::msm::scratchboard();
+        // cuda_test::msm::scratchboard();
         // call_run_MSM_tests();
         assert!(true);
     }

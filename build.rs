@@ -29,8 +29,10 @@ fn main() {
         nvcc.define("RUST_TEST", None);
     }
 
-    nvcc.no_default_flags(true);
-    nvcc.warnings(false);
+    // nvcc.no_default_flags(true);
+    // nvcc.warnings(false);
+    nvcc.flag("-G");
+    nvcc.flag("-lineinfo");
     
     nvcc.clone().files(cuda_files). 
     compile("clad");

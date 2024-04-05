@@ -5,6 +5,7 @@
 __managed__ enum verbosityLevel verbosity;
 __managed__ bool stdout_isatty;
 __managed__ bool errorOnce;
+__managed__ bool pass; 
 
 
 

@@ -65,7 +65,7 @@ template<typename T>
             cpy(y, testval[j]);
 
             add(x, x, y); // x + y
-            add(y, y, x); // y + x
+            add(y, y, testval[i]); // y + x
 
             if(ne(x, y)){
                 pass = false;
@@ -119,7 +119,7 @@ template<typename T>
                 if(ne(a, c)){
                     pass = false;
                     if (verbosity >= PRINT_MESSAGES){
-                        printf("%d,%d,d: FAILED\n", i, j, k);
+                        printf("%d,%d,%d: FAILED\n", i, j, k);
                         field_print("x = ",  testval[i]);
                         field_print("y = ",  testval[j]);
                         field_print("z = ",  testval[k]);
@@ -239,7 +239,7 @@ template<typename T>
                 add(v, v, b);   // a+b
                 mul(v, v, c);   // (a+b)c
 
-                if (fp_ne(u, v)) {
+                if (ne(u, v)) {
                     pass = false;
 
                     printf("%d,%d, %d: FAILED: inconsistent result\n", i, j, k);
