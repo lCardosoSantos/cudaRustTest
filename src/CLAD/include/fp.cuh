@@ -83,7 +83,7 @@ __device__ void fp_x3 (fp_t &z, const fp_t &x);
 __device__ void fp_x4 (fp_t &z, const fp_t &x);
 __device__ void fp_x8 (fp_t &z, const fp_t &x);
 __device__ void fp_x12(fp_t &z, const fp_t &x);
-__device__ void fp_neg(fp_t &z, const fp_t &x);
+__device__ void fp_neg(fp_t &z, const fp_t &x, const fp_t &y);
 
 // Comparisons
 
@@ -107,7 +107,7 @@ namespace fp {
     inline __device__ void x4 (fp_t &z, const fp_t &x) { fp_x4 (z, x); }
     inline __device__ void x8 (fp_t &z, const fp_t &x) { fp_x8 (z, x); }
     inline __device__ void x12(fp_t &z, const fp_t &x) { fp_x12(z, x); }
-    inline __device__ void neg(fp_t &z, const fp_t &x) { fp_neg(z, x); }
+    inline __device__ void neg(fp_t &z, const fp_t &x, const fp_t &y) { fp_neg(z, x, y); }
 
     inline __device__  bool eq(const fp_t &x, const fp_t &y) { return fp_eq(x, y); }
     inline __device__  bool ne(const fp_t &x, const fp_t &y) { return fp_ne(x, y); }

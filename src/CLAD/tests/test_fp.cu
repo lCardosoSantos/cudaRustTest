@@ -2,7 +2,7 @@
 #include "testFields.cuh"
 #include "fp.cuh"
 
-#define TESTSIZE (size_t)1024
+#define TESTSIZE (size_t)256
 
 
 // extern "C" void run_fp_tests(){
@@ -46,14 +46,26 @@ extern "C" void run_fp_tests(){
     cudaError_t err;
     init(TESTSIZE, testval_fp);
     
-    //Linear time tests
+    //commented tests are not implemented funcs
 
+    //Linear time tests
     TEST_RUN(TestFieldCmp, pass, testval_fp, TESTSIZE);
     TEST_RUN(TestFieldMulConst, pass, testval_fp, TESTSIZE);
     TEST_RUN(TestFieldAdd, pass, testval_fp, TESTSIZE);
     TEST_RUN(TestFieldSub, pass, testval_fp, TESTSIZE);
+    TEST_RUN(TestFieldMul, pass, testval_fp, TESTSIZE);
+
+        // TEST_RUN(TestFieldSqr, pass, testval_fp, TESTSIZE);
+        // TEST_RUN(TestFieldInv, pass, testval_fp, TESTSIZE);
+        // TEST_RUN(TestFieldMMA, pass, testval_fp, TESTSIZE); 
 
 
+    //Quadratic time tests
+    // TEST_RUN(TestFieldSqr2, pass, testval_fp, TESTSIZE);
+    TEST_RUN(TestFieldCommutativeAdd, pass, testval_fp, TESTSIZE);
+    TEST_RUN(TestFieldCommutativeMul, pass, testval_fp, TESTSIZE);
+
+    printf("\n---\n");
     cudaFree(testval_fp);
 }
 

@@ -41,6 +41,7 @@ extern __managed__ bool errorOnce;
 #define TEST_RUN(f, pass_var, testval_var, testsize_var) \
     f<<<1,1>>>(pass_var, testval_var, testsize_var);\
     CUDASYNC( #f );\
+    if(err != cudaSuccess) pass_var = false; \
     PRINTPASS(pass_var)
 
 #define DEBUGPRINT(var) printf(">>>> " #var " 0x%x \n", var);
@@ -50,7 +51,7 @@ extern __managed__ bool errorOnce;
     #define CUDASYNC(fmt, ...)                                                                                             \
         err = cudaDeviceSynchronize();                                                                                     \
         if (err != cudaSuccess){                                                                                           \
-        printf("%s:%d " fmt " Error: %d (%s)\n", __FILE__, __LINE__, err, cudaGetErrorName(err), ##__VA_ARGS__);           \
+        printf("\n%s:%d " fmt " Error: %d (%s)\n", __FILE__, __LINE__, err, cudaGetErrorName(err), ##__VA_ARGS__);           \
         }                                                                                                     
 #endif
 
@@ -116,6 +117,7 @@ void init(const size_t testsize, T* testval, enum verbosityLevel vl = PRINT_MESS
 
     if (!urandom) fclose(urandom);
     
+    printf(">INIT %d\n", i);
 }
 
 template<typename T>

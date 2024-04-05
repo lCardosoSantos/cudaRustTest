@@ -64,8 +64,8 @@ template<typename T>
             cpy(x, testval[i]);
             cpy(y, testval[j]);
 
-            add(x, x, testval[j]); // x + y
-            add(y, y, testval[i]); // y + x
+            add(x, x, y); // x + y
+            add(y, y, x); // y + x
 
             if(ne(x, y)){
                 pass = false;
