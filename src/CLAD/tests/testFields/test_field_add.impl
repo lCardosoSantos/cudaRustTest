@@ -60,7 +60,7 @@ template<typename T>
     T x, y;
 
     for (int i=0; pass && i<testsize; i++){
-        for (int j; pass && j<testsize; j++){
+        for (int j=0; pass && j<testsize; j++){
             cpy(x, testval[i]);
             cpy(y, testval[j]);
 

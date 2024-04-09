@@ -35,7 +35,7 @@ template<typename T>
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 printf( "%d: FAILED\n", i);
-                printf( "eq(x,x) != ne(x,x) \n", i);
+                printf( "eq(x,x) != ne(x,x) \n");
                 field_print("a:   ", a);
                 field_print("b:   ", b);
             }
@@ -47,7 +47,7 @@ template<typename T>
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 printf( "%d: FAILED\n", i);
-                printf( "ne(x,x)==false \n", i);
+                printf( "ne(x,x)==false \n");
                 field_print("a:   ", a);
                 field_print("b:   ", b);
             }
@@ -59,7 +59,7 @@ template<typename T>
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 printf( "%d: FAILED\n", i);
-                printf( "ne(x,y) == true \n", i);
+                printf( "ne(x,y) == true \n");
                 field_print("a:   ", a);
                 field_print("c:   ", c);
             }
@@ -71,7 +71,7 @@ template<typename T>
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 printf( "%d: FAILED\n", i);
-                printf( "eq(x,x) == true \n", i);
+                printf( "eq(x,x) == true \n");
                 field_print("a:   ", a);
                 field_print("b:   ", b);
             }
@@ -83,7 +83,7 @@ template<typename T>
             pass = false;
             if (verbosity >= PRINT_MESSAGES){
                 printf( "%d: FAILED\n", i);
-                printf( "eq(x,y) == false \n", i);
+                printf( "eq(x,y) == false \n");
                 field_print("a:   ", a);
                 field_print("c:   ", c);
             }

@@ -4,6 +4,5 @@
 /**/filegen.sh
 *.o
 .buildlog
-scratch.cu
 .vscode/*
 *.zip
