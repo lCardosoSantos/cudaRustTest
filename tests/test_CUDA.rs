@@ -16,6 +16,11 @@ mod tests{
         fn run_fp_tests();
     }
 
+    #[cfg(feature = "msm_primitive_test")]
+    extern "C"{
+        fn run_sparseMatrix_test();
+    }
+
     // extern "C"{
     //     fn run_msm_tests();
     // }
@@ -31,6 +36,11 @@ mod tests{
         unsafe {run_fp_tests()};
     }
     
+    #[cfg(feature = "msm_primitive_test")]
+    pub fn call_run_sparseMatrix_tests(){
+        unsafe {run_sparseMatrix_test()};
+    }
+
     // pub fn call_run_MSM_tests(){
     //     println!("Calling CUDA run_msm_tests()");
     //     println!("--\n");
@@ -47,7 +57,7 @@ mod tests{
     #[cfg(feature = "msm_primitive_test")]
     #[test]
     fn test_fields(){
-               
+        call_run_sparseMatrix_tests();
         call_run_fp_tests();
         call_run_fr_tests();
         assert!(true);

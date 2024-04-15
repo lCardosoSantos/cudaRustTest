@@ -1,3 +1,4 @@
+.idea/
 *.old
 .notes
 /target
@@ -6,3 +7,4 @@
 .buildlog
 .vscode/*
 *.zip
+Cargo.lock
