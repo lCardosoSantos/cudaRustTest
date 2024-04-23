@@ -3,43 +3,41 @@
 
 extern crate cuda_test;
 
-
 mod tests{
+    use std::ffi::c_void;
+    use crate::cuda_test::sparse;
 
-    #[cfg(feature = "msm_primitive_test")]
+    #[cfg(feature = "primitive_test")]
     extern "C"{
         fn run_fr_tests();
     }
 
-    #[cfg(feature = "msm_primitive_test")]
+    #[cfg(feature = "primitive_test")]
     extern "C"{
         fn run_fp_tests();
     }
 
-    #[cfg(feature = "msm_primitive_test")]
+    #[cfg(feature = "primitive_test")]
     extern "C"{
         fn run_sparseMatrix_test();
     }
 
-    // extern "C"{
-    //     fn run_msm_tests();
-    // }
 
-
-    #[cfg(feature = "msm_primitive_test")]
+    #[cfg(feature = "primitive_test")]
     pub fn call_run_fr_tests(){
         unsafe {run_fr_tests()};
     }
 
-    #[cfg(feature = "msm_primitive_test")]
+    #[cfg(feature = "primitive_test")]
     pub fn call_run_fp_tests(){
         unsafe {run_fp_tests()};
     }
     
-    #[cfg(feature = "msm_primitive_test")]
-    pub fn call_run_sparseMatrix_tests(){
+    #[cfg(feature = "primitive_test")]
+    pub fn call_run_sparse_matrix_tests(){
         unsafe {run_sparseMatrix_test()};
     }
+
 
     // pub fn call_run_MSM_tests(){
     //     println!("Calling CUDA run_msm_tests()");
@@ -54,21 +52,22 @@ mod tests{
         assert!(true);
     }
 
-    #[cfg(feature = "msm_primitive_test")]
+    #[cfg(feature = "primitive_test")]
     #[test]
     fn test_fields(){
-        call_run_sparseMatrix_tests();
         call_run_fp_tests();
         call_run_fr_tests();
         assert!(true);
     }
-    
-    // #[cfg(feature = "msm_primitive_test")]
-    // #[test]
-    // fn test_elliptic_curve(){
 
-    //     call_run_g1_tests();
-    //     assert!(false);
-    // }
+    #[cfg(feature = "primitive_test")]
+    #[test]
+    fn test_sparse_matrix(){
+        call_run_sparse_matrix_tests();
+        call_sparseMatrix_read_test();
+        assert!(true);
+    }
+
+    //Todo: test data transfer to Cuda side.
 
 }

@@ -20,6 +20,15 @@ class SparseMatrix_t {
     size_t cols;         // Number of columns
     size_t rows;         // Number of Rows
 
+    int64_t *idx;          // used on the preprocessing phase.
+
+#ifdef ASYNCLOAD
+    cudaEvent_t loaded;  // for Asynchronous load
+    cudaStream_t loadingStream; //
+#else
+    bool loaded = false; 
+#endif
+
     void allocateUnifiedMemory(size_t nRow, size_t nCol, size_t nElements){
         cudaError_t err; 
 
@@ -38,6 +47,7 @@ class SparseMatrix_t {
         FREEANDCHECK(indices);
         FREEANDCHECK(indptr);
 
+        free(idx);
         #undef FREEANDCHECK
     }
 
@@ -52,12 +62,57 @@ class SparseMatrix_t {
         memcpy(data, data_, nElements_*sizeof(F));
         memcpy(indices, indices_, nElements_*sizeof(size_t));
         memcpy(indptr, indptr_, (nCols_+1)*sizeof(size_t));
+
+        idx = (int64_t *)malloc(nElements_ * sizeof(int64_t));
+        for(int i=0; i<nElements_; i++) idx[i]=i;
+
+        preprocess();
+        loaded = true;
     }
+
+    // Empty constructor
+    SparseMatrix_t(const SparseMatrix_t &) = default;
 
     //Destructor
     ~SparseMatrix_t(){
         deallocate();
     }
+
+    //reeorganize matrix for fast memory access on cuda
+    size_t qpart(size_t *array, size_t low, size_t high){
+        size_t i = low-1;
+
+        size_t pivot = array[high];
+        for(size_t j=low;j<high;j++)
+        {
+            if(array[j]<=pivot)
+            {
+                i++;
+                // swap(nums[i],nums[j]);
+                std::swap(data[i], data[j]);
+                std::swap(indices[i], indices[j]);
+                std::swap(idx[i], idx[j]);
+            }
+        }
+        // swap(nums[i+1],nums[high]);
+        std::swap(data[i+1], data[high]);
+        std::swap(indices[i+1], indices[high]);
+        std::swap(idx[i+1], idx[high]);
+        return i+1;
+
+    }
+    void cqsort(size_t *array, size_t low, size_t high){
+        if(low<high){
+            size_t pivot = qpart(array, low, high);
+            cqsort(array, low, pivot-1);
+            cqsort(array, pivot+1, high);
+        }
+    }
+
+    void preprocess(){
+        cqsort(indices, 0, nElements-1);
+    }
+
 
     // For security, this matrix is readonly, writeback is done to a vector of F.   
     // void copyToRust(F *data, size_t *indices, size_t *indptr){
