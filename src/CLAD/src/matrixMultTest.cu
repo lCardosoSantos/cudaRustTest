@@ -1,4 +1,5 @@
 //INTERNAL EXPERIMENTATION ONLY
+//Does matrix Multiplication using a dummy fr_t
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
@@ -8,42 +9,58 @@
 #include <unordered_map>
 #include <map>
 #include <iostream>
+#include <chrono>
 
 using std::vector; 
 using std::unordered_map;
+using namespace std::chrono;
+
+
+    #ifndef CUDASYNC
+    #define CUDASYNC(fmt, ...)                                                                                             \
+        err = cudaDeviceSynchronize();                                                                                     \
+        if (err != cudaSuccess){                                                                                           \
+        printf("\n%s:%d " fmt " Error: %d (%s)\n", __FILE__, __LINE__, err, cudaGetErrorName(err), ##__VA_ARGS__);           \
+        }                                                                                                     
+    #endif
+
 
 class fr_t {
     public:
-    uint64_t _[4];
+    __managed__ uint64_t _[4];
     fr_t(const fr_t &) = default;
     ~fr_t() = default;
     
     // Default constructor
-    fr_t() : _{0, 0, 0, 0} {}  // Initialize all elements to zero
+    __host__ __device__ fr_t() : _{0, 0, 0, 0} {}  // Initialize all elements to zero
 
-    fr_t(int a){
+    __host__ __device__ fr_t(int a){
         _[0] = a;
-        _[1] = 0;
-        _[2] = 0;
-        _[3] = 0;
+        _[1] = a;
+        _[2] = a;
+        _[3] = a;
 
     }
 
-    bool operator>(const fr_t& y) const{
+    __host__ __device__ bool operator>(const fr_t& y) const{
         return _[0] > y._[0];
     }
 
-    bool operator<(const fr_t& y) const{
+    __host__ __device__ bool operator==(const fr_t& y) const{
+        return _[0] == y._[0];
+    }
+
+    __host__ __device__ bool operator<(const fr_t& y) const{
         return _[0] < y._[0];
     }
 
     // Multiplication operator
-    fr_t operator*(const fr_t& y) const {
+    __host__ __device__ fr_t operator*(const fr_t& y) const {
         return fr_t(static_cast<int>(_[0] * y._[0])); 
     }
 
     // Addition assignment operator
-    fr_t& operator+=(const fr_t& y) {
+    __host__ __device__ fr_t& operator+=(const fr_t& y) {
         _[0] += y._[0]; 
         return *this;
     }
@@ -142,17 +159,17 @@ void sparseMatrixLoad(field *A_data, size_t *A_indices, size_t *A_indptr, size_t
 
     for(size_t i=0; i<A_nRows; i++){
         rowLen = A_indptr[i+1]-A_indptr[i];
-        ABC_indptr[index] = A_indptr[index-1]+rowLen;
+        ABC_indptr[index] = ABC_indptr[index-1]+rowLen;
         index++;
     }
     for(size_t i=0; i<B_nRows; i++){
         rowLen = B_indptr[i+1]-B_indptr[i];
-        ABC_indptr[index] = B_indptr[index-1]+rowLen;
+        ABC_indptr[index] = ABC_indptr[index-1]+rowLen;
         index++;
     }
     for(size_t i=0; i<C_nRows; i++){
         rowLen = C_indptr[i+1]-C_indptr[i];
-        ABC_indptr[index] = C_indptr[index-1]+rowLen;
+        ABC_indptr[index] = ABC_indptr[index-1]+rowLen;
         index++;
     }
 
@@ -174,52 +191,32 @@ void sparseMatrixLoad(field *A_data, size_t *A_indices, size_t *A_indptr, size_t
         rowWeight[i] = ABC_indptr[i+1]-ABC_indptr[i];
     }
 
-                // //generate rowDestination array
-                // vector<size_t> rowDestination = sort_by_frequency(rowWeight);
 
-                // //generate posVector
-                // //posVector is a 1 to 1 array that points to where a value should be written to after a multiplication
-                // vector<size_t> posVector(ABC_NNZ);
-                // size_t indexer = 0;
-                // for(size_t row=0; row<ABC_nRows; row++){
-                //     size_t source = rowDestination[row];
-                //     size_t start  = ABC_indptr[source];
-                //     size_t end    = ABC_indptr[source+1];
+    //TODO: BUG HERE ON INDPTR CREATION
+    vector<size_t> posVector = sort_by_frequency(rowWeight); //how to sort the array such that rows are in order.
 
-                //     for(size_t i=start; i<end; i++){
-                //         posVector[indexer] = i; 
-                //         indexer++;
-                //     }
-
-                // }
-
-    //rowIndexer
-    vector<size_t> rowIndexer(ABC_NNZ);
-    for(size_t row=0; row<ABC_nRows; row++){
-        for(size_t i = ABC_indptr[row]; i<ABC_indptr[row+1]; i++){
-            rowIndexer[i]=row;
-        }
-    }
-    auto posVector = sort_by_frequency(rowIndexer);
-
-    //rowDestination
     vector<size_t> rowDestination(ABC_nRows);
-    rowDestination[0] = rowIndexer[posVector[0]];
-    for(int i=1, j=1; i<ABC_NNZ; i++){
-        if (rowIndexer[posVector[i]] != rowDestination[j-1]){
-            rowDestination[j] = rowIndexer[posVector[i]];
-            j++;
-        }
+    for(int i=0; i<ABC_nRows; i++){
+        rowDestination[i] = posVector[i];
     }
 
     //generate new indptr for the weight ordered array - will be used by the multiplication to write the data to correct places.
     vector<size_t> ABC_indptr_sorted(ABC_nRows+1);
     ABC_indptr_sorted[0]=0;
     for(size_t i=0; i<ABC_nRows; i++){
-        size_t target = rowDestination[i];
-        size_t rowLen = ABC_indptr[target+1]-ABC_indptr[target];
+        size_t source = rowDestination[i];
+        size_t rowLen = ABC_indptr[source+1]-ABC_indptr[source];
         ABC_indptr_sorted[i+1] = ABC_indptr_sorted[i]+rowLen;
     }
+
+    //for composint the permutation
+    vector<size_t> rowIndexer(ABC_NNZ);
+    for(int row = 0; row<ABC_nRows; row++){
+        for(size_t i = ABC_indptr[row]; i<ABC_indptr[row+1]; i++){
+            rowIndexer[i]=row;
+        }
+    }
+
 
     // At this point, we have 3 working arrays: ABC_data, ABC_Cols and posVector. By executing mul[i] = data[i] * witness[col[i]], 
     // the resultng mul vector will be ordered such that rows with the most ammount of elements will be first in memory.
@@ -326,15 +323,19 @@ void sparseMatrixLoad(field *A_data, size_t *A_indices, size_t *A_indptr, size_t
     }
     auto mTarget = sort_by_frequency(RowsPermuted);
 
-    for(size_t i=0; i<NZZ; i++)
-        multTarget[i] = mTarget[i];
+    //This permutation is inverted, so one could address it as target[index[i]] = source[i]
+    //this is usefull because the source can be indexed by threadId, making so a whole warp writes the scather.
+    for(size_t i=0; i<NZZ; i++){
+        // multTarget[i] = mTarget[i]; //not inverted
+        multTarget[mTarget[i]] = i; //not inverted
+    }
 
     //copy rowDest
     for(int i=0; i<nRows; i++)
         rowDest[i] = rowDestination[i];
 
     //new indptr
-    for(int i=0; i<NZZ+1; i++)
+    for(int i=0; i<nRows+1; i++)
         indptr[i] = ABC_indptr_sorted[i];
 
     // Generate Colptr for helping the multiplication
@@ -357,80 +358,115 @@ void sparseMatrixLoad(field *A_data, size_t *A_indices, size_t *A_indptr, size_t
 }
 
 template<typename field>
-__global__  void multiplyWitnessKernel(field *ABCZ, field *witness){
+__global__  void multiplyWitnessKernel_old(field *ABCZ, field *witness){
     unsigned tidx = threadIdx.x;
     unsigned bidx = blockIdx.x;
     unsigned bdim = blockDim.x;
     unsigned gdim = gridDim.x; 
 
-    __shared__ uint32_t w[(4*8+1)*8];
+    __shared__ uint32_t w[9*32]; // field=8 words + 1 for bank align, time 32 threads in a block.
     field m; 
 
     // We are going to use a warp for multiplication -> 32 threads, and fill the SM with 2048 threads (64 warps, one block per warp)
     
-    for(int i = 0; i<(nCols+gdim); i+=gdim){ //loop over the columns
-        if((i+bidx)>= nCols) break;
-        m = witness[indices[i+tidx]];  //load multiplicand to shared memory
+    for(int i = bidx; i<nCols; i+=gdim){ //loop over the columns
+        m = witness[indices[i]];  //load multiplicand to shared memory
 
         size_t colStart = colptr[i + bidx]; //points at start of column of each block
         size_t colEnd = colptr[i+1 + bidx]; //points at end of column of each block
 
-        for (size_t j=colStart; j<(colEnd+bdim); j+=bdim){
+        for (size_t j=colStart; j<colEnd; j+=bdim){
             //Load multipliers to shared memory
             //load from J to J+31
-            uint32_t *input = (uint32_t*)(&(data[j]));
-            for(int i=0; i<8; i++){
-                w[33*i+4*tidx] = input[32*i+4*tidx];
+            // uint32_t *baseIndex = (uint32_t*)(&(data[j+tidx]));
+            size_t dataIndex = j+tidx;
+            uint32_t *wPointer = (uint32_t *)(&data[dataIndex]);
+
+
+            for(int ii=0; ii<8; ii++){
+                int sharedIndex = tidx * 9 + ii;
+                w[sharedIndex] = wPointer[ii];
             }
 
             if((j+tidx) >= colEnd )break; //if lenght of col is not a multiple of 32
 
-            field res = m * w[tidx*4 + tidx%4];
+            field *operand = reinterpret_cast<field*>(&w[tidx*9]);
+            field res = m * (*operand);
 
             ABCZ[multTarget[j+tidx]] = res; //multiply and add to correct destination //TODO: Change for Field after int debug
         }
     }
 }
 
+
 template<typename field>
-__global__  void sumWitnessKernel(field *resUnsorted, field *ABCZ){
+__global__  void multiplyWitnessKernel(field *ABCZ, field *witness){
     unsigned tidx = threadIdx.x;
     unsigned bidx = blockIdx.x;
     unsigned bdim = blockDim.x;
-     unsigned gdim = gridDim.x; 
+    unsigned gdim = gridDim.x; 
+    __shared__ field m; 
 
-    field m[bdim];
-    m[tidx] = 0; //fr.zero()
+    // We are going to use a warp for multiplication -> 32 threads, and fill the SM with 2048 threads (64 warps, one block per warp)
+    
+    for(int i = bidx; i<nCols; i+=gdim){ //loop over the columns
+        m = witness[indices[i]];  //load multiplicand to shared memory
 
+        size_t colStart = colptr[i + bidx]; //points at start of column of each block
+        size_t colEnd = colptr[i+1 + bidx]; //points at end of column of each block
+
+        for (size_t j=colStart; j<colEnd; j+=bdim){
+
+            if((j+tidx) >= colEnd )break; //if lenght of col is not a multiple of 32
+
+            field res = m * data[j+tidx]; 
+
+            ABCZ[multTarget[j+tidx]] = res; //multiply and add to correct destination //TODO: Change for Field after int debug
+        }
+    }
+}
+
+
+template<typename field>
+__global__  void sumWitnessKernel(field *res, field *ABCZ){
+    unsigned tidx = threadIdx.x;
+    unsigned bidx = blockIdx.x;
+    unsigned bdim = blockDim.x;
+    unsigned gdim = gridDim.x; 
+
+    extern __shared__ field accumulator[]; //make sure this array is of lenght bdim
+    
     // We are going to use a warp for sum -> 32 threads, and use 1warp = 1block to run
-    for(int i = 0; i<nRows; i+=gdim){
-        size_t start = indptr[i + bidx];
-        size_t end = indptr[i +1 + bidx];
+    for(int i = bidx; i<nRows; i+=gdim){
+        size_t start = indptr[i];
+        size_t end = indptr[i +1];
+        field m = 0; //fr.zero()
 
         //group of threads sum to shared mem
-        for (size_t j = start; j<end; j+=bdim){
-            m[tidx] =+ ABCZ[j+tidx];
+        size_t maxIndex = end-((end-start)%bdim);
+        for (size_t j = start; j<maxIndex; j+=bdim){
+            m += ABCZ[j+tidx];
         }
-        //extra
-        int j=(end/bdim)*bdim;
-        if (j+tidx < end) m[tidx]+=ABCZ[j+tidx];
+        //last bits
+        if(tidx < (end-start)%bdim){
+            m += ABCZ[maxIndex+tidx];
+        }
 
         //reduce shared memory
-        for (int s = bdim / 2; s > 0; s>>=1){
-            if (tidx < s){
-                m[tidx] += m[tidx+s];
+        accumulator[tidx]=m;
+        __syncthreads();
+        for (int stride = bdim / 2; stride > 0; stride>>=1){
+            if (tidx < stride){
+                accumulator[tidx] += accumulator[tidx+stride];
             }
             __syncthreads();
         }
 
         //thread zero writes to result
-        if(tidx == 0) resUnsorted[i+bidx] = m[0];
+        if(tidx == 0) res[rowDest[i]] = accumulator[0];
+        // if(tidx == 0) res[i] = accumulator[0];
     }
-}
-
-template<typename field>
-void writeSorted(field *rustPointerA, field *rustPointerB, field *rustPointerC, field *resUnsorted){
-    //uses colum sorting information to write data back into the correct pointers.
+    __syncthreads();
 }
 
 template<typename field>
@@ -439,8 +475,10 @@ vector<field> multiplyWitnessCPU(field *witness){
 
     //multiply
     vector<field> m (NZZ);
-    for(size_t i=0; i<NZZ; i++)
-        m[i] = data[multTarget[i]]*witness[indices[multTarget[i]]];
+    for(size_t i=0; i<NZZ; i++){
+        // m[i] = data[multTarget[i]]*witness[indices[multTarget[i]]]; //Not inverted Multarget
+        m[multTarget[i]] = data[i]*witness[indices[i]]; //invertedMulTarget
+    }
 
     //add
     vector<field> resultUnordered(nRows, 0);
@@ -460,6 +498,25 @@ vector<field> multiplyWitnessCPU(field *witness){
 
     return res;
 }
+
+template<typename field>
+vector<field> multiplyWitnessCPU_straight(field *witness_s, field *data_s, size_t *indices_s, size_t *indptr_, 
+                                         size_t nCols, size_t nRows_, size_t NZZ){
+    //runs the alg using CPU, usefull for debugging the preprocessing step and kernels
+    
+    vector<field> resCPU(nRows_, 0);
+
+    for(size_t i=0; i<nRows_; i++){
+        size_t start = indptr_[i];
+        size_t end   = indptr_[i+1];
+        for(size_t j=start; j < end; j++){
+            field m = data_s[j]*witness_s[indices_s[j]];
+            resCPU[i] += m;
+        }
+    }
+    return resCPU;
+}
+
 
 
 // int main() {
@@ -494,7 +551,124 @@ void pfr(vector<fr_t> &a){
     printf("\n");
 }
 
+// __managed__ fr_t ABCZ[A_NNZ*3], res[A_nRows*3];
+    __managed__ fr_t *ABCZ, *res_cuda;
+    __managed__ fr_t *w_cuda;
+
 int main(){
+    cudaError_t err;
+    size_t cols   = 79998;//4;//7999846;
+    size_t nRows_ = 98250;//4;//9825045;
+    size_t nZ     = 1046754;//6; //104675466; 
+    // size_t data_limit = 10; //for easier debugging
+
+
+    fr_t   *data_    = (fr_t *)malloc(nZ * sizeof(fr_t));
+    fr_t   *wit      = (fr_t *)malloc(cols * sizeof(fr_t));
+    size_t *indices_ = (size_t *)malloc(nZ * sizeof(size_t));
+    size_t *indptr_  = (size_t *)malloc((nRows_ + 1) * sizeof(size_t));
+
+
+    //random matrix
+    // Fill row_ptrs with 0 initially
+    for (size_t i = 0; i < nRows_+1; ++i) {
+        indptr_[i] = 0;
+    }
+
+    // Randomly distribute nonzeros across the rows
+    for (size_t i = 0; i < nZ; ++i) {
+        size_t row = rand() % nRows_;
+        indptr_[row + 1]++;
+    }
+
+    // Convert the count into actual indices_
+    for (size_t i = 1; i <= nRows_; ++i) {
+        indptr_[i] += indptr_[i - 1];
+    }
+
+    // Assign random columns and values to each entry
+    for (size_t i = 0; i < nZ; ++i) {
+        indices_[i] = rand() % cols;
+        data_[i] = rand(); // & data_limit;
+    }
+
+
+
+    printf("allocating %d Mbytes of managed memory\n", sizeof(fr_t)*nZ / (1024*1024));
+    err = cudaMallocManaged(&ABCZ, sizeof(fr_t)* nZ);
+    if (err != cudaSuccess){ 
+        printf("Error alocating memory ABCZ");
+        }
+
+    printf("allocating %d Mbytes of managed memory\n", sizeof(fr_t)*nRows_ / (1024*1024));
+    err = cudaMallocManaged(&res_cuda, sizeof(fr_t)* nRows_);
+    if (err != cudaSuccess){ 
+        printf("Error alocating memory res_cuda");
+        }
+
+    printf("allocating %d Mbytes of managed memory\n", sizeof(fr_t)*cols / (1024*1024));
+    err = cudaMallocManaged(&w_cuda, sizeof(fr_t)* cols);
+    if (err != cudaSuccess){ 
+        printf("Error alocating memory w_cuda");
+        }
+
+    //random witness
+    for(size_t i=0; i<nCols; i++){
+        wit[i] = rand();
+    }
+    
+
+
+
+    printf("starting preprocessing...\n");
+    auto  start = high_resolution_clock::now();
+    sparseMatrixLoad<fr_t>(data_, indices_, indptr_, nZ, nRows_,
+                        NULL, NULL, NULL, 0, 0,
+                        NULL, NULL, NULL, 0, 0,
+                        cols);
+    auto  stop = high_resolution_clock::now();
+    auto  duration = duration_cast<milliseconds>(stop - start);
+    printf(">>preprocessing = %d ms\n", duration.count());
+
+
+    start = high_resolution_clock::now();
+    auto res = multiplyWitnessCPU<fr_t>(wit);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(stop - start);
+    printf(">>CPU mult = %d ms\n", duration.count());
+
+    
+    int blockSize = 64;
+    int gridSize  = 512;
+    int sharedMem = blockSize*sizeof(fr_t);
+
+        start = high_resolution_clock::now();
+    multiplyWitnessKernel<<<gridSize, blockSize>>>(ABCZ, w_cuda);
+    CUDASYNC("Multiply");
+
+    sumWitnessKernel<<<gridSize, blockSize, sharedMem>>>(res_cuda, ABCZ);
+    CUDASYNC("Sum")
+        stop = high_resolution_clock::now();
+        duration = duration_cast<milliseconds>(stop - start);
+        printf(">>GPU = %d ms\n", duration.count());
+
+
+    for (int i=0; i<cols; i++){
+        if (!(res_cuda[i] == res[i])){
+            printf("Error detected at idx %d, further errors ignored\n");
+        }
+    }
+
+    start = high_resolution_clock::now();
+    
+    auto resS = multiplyWitnessCPU_straight<fr_t>(wit, data_, indices_, indptr_, cols, nRows_, nZ);
+
+    stop = high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(stop - start);
+    printf(">>CPU mult naive = %d ms\n", duration.count());
+}
+
+int main_(){
 
     printf("test using int as base for the multiplication\n");
     
@@ -509,17 +683,66 @@ int main(){
     size_t A_indptr[11] = {0, 1, 4, 6, 9, 14, 17, 18, 20, 23, 25};
     size_t A_NNZ = 25;
 
-    fr_t w[20] = {37, 59, 0, 138, 51, 0, 11, 0, 0, 0, 87, 46, 61, 0, 140, 59, 0, 0, 214, 0}; //{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    fr_t w[20] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; // {37, 59, 0, 138, 51, 0, 11, 0, 0, 0, 87, 46, 61, 0, 140, 59, 0, 0, 214, 0}; 
     
+    // sparseMatrixLoad<fr_t>(A_data, A_indices, A_indptr, A_NNZ, A_nRows,
+    //                        NULL, NULL, NULL, 0, 0,
+    //                        NULL, NULL, NULL, 0, 0,
+    //                        nCols_l);
+
     sparseMatrixLoad<fr_t>(A_data, A_indices, A_indptr, A_NNZ, A_nRows,
-                           NULL, NULL, NULL, 0, 0,
-                           NULL, NULL, NULL, 0, 0,
+                           A_data, A_indices, A_indptr, A_NNZ, A_nRows,
+                           A_data, A_indices, A_indptr, A_NNZ, A_nRows,
                            nCols_l);
 
 
 
-    auto res = multiplyWitnessCPU<fr_t>(w); //[255, 343, 538, 574, 533]
+        auto start = high_resolution_clock::now();
+    auto res = multiplyWitnessCPU<fr_t>(w); //[0, 427, 7959, 27401, 26184, 44341, 11623, 0, 11487, 1771]
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(stop - start);
+        printf(">>CPU = %d ms\n", duration.count());
+    
     pfr(res);
+
+    printf("GPU\n");
+
+    #ifndef CUDASYNC
+    #define CUDASYNC(fmt, ...)                                                                                             \
+        err = cudaDeviceSynchronize();                                                                                     \
+        if (err != cudaSuccess){                                                                                           \
+        printf("\n%s:%d " fmt " Error: %d (%s)\n", __FILE__, __LINE__, err, cudaGetErrorName(err), ##__VA_ARGS__);           \
+        }                                                                                                     
+    #endif
+
+    cudaError_t err;
+    cudaMallocManaged(&ABCZ, sizeof(fr_t)* 75);
+    cudaMallocManaged(&res_cuda, sizeof(fr_t)* 30);
+    cudaMallocManaged(&w_cuda, sizeof(fr_t)* 20);
+
+    for(int i=0; i<20; i++) w_cuda[i] = 1;  //unit multiplicand
+
+    
+    int blockSize = 16;
+    int gridSize  = 4;
+    int sharedMem = blockSize*sizeof(fr_t);
+        start = high_resolution_clock::now();
+    multiplyWitnessKernel<<<gridSize, blockSize>>>(ABCZ, w_cuda); //1 thread, one block.
+    CUDASYNC("Multiply");
+
+    sumWitnessKernel<<<gridSize, blockSize, sharedMem>>>(res_cuda, ABCZ);
+    CUDASYNC("Sum")
+        stop = high_resolution_clock::now();
+        duration = duration_cast<milliseconds>(stop - start);
+        printf(">>GPU = %d ms\n", duration.count());
+
+    // printf("ABCZ m:");
+    // pfr(ABCZ, A_NNZ*3);
+
+
+    printf("resCuda m:");
+    pfr(res_cuda, 30);
+
 
     printf("end\n");
 
