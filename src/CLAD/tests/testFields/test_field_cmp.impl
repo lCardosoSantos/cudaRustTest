@@ -1,3 +1,6 @@
+// Copyright 2022-2024 Dag Arne Osvik
+// Copyright 2022-2024 Luan Cardoso dos Santos
+
 #include "testFields.cuh"
 #include "fp.cuh"
 #include "fr.cuh"
@@ -29,7 +32,7 @@ template<typename T>
     for (int i=0; pass && i<testsize; i++){
         cpy(a, testval[i]);
         cpy(b, testval[i]);
-        T c = {-1, -1, -1, -1};
+        T c = {~0ul, ~0ul, ~0ul, ~0ul};
 
         if(eq(a, b) == ne(a, b)){
             pass = false;

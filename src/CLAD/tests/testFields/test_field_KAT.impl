@@ -1,3 +1,5 @@
+// Copyright 2022-2024 Dag Arne Osvik
+// Copyright 2022-2024 Luan Cardoso dos Santos
 #include "testFields.cuh"
 
 /**
@@ -15,7 +17,7 @@
  */
 template<typename T>
  __global__ void TestFieldKAT(bool &result, T *testval, const size_t testsize){
-    #warning Function not implemented: TestFieldKAT
+    // #warning Function not implemented: TestFieldKAT
 }
 
 // /**

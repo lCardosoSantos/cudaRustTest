@@ -57,7 +57,9 @@ class fr_t {
     // Conversions to and from Montgomery format
 
     __device__ void to_mont(uint64_t &z0, uint64_t &z1, uint64_t &z2, uint64_t &z3);
+    __device__ void to_mont(fr_t &z);
     __device__ void from_mont(uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3);
+    __device__ void from_mont(fr_t x);
 
 };
 

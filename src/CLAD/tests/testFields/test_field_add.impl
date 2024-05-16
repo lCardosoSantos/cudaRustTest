@@ -1,3 +1,6 @@
+// Copyright 2022-2024 Dag Arne Osvik
+// Copyright 2022-2024 Luan Cardoso dos Santos
+
 #include "testFields.cuh"
 #include "fp.cuh"
 #include "fr.cuh"

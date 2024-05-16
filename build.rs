@@ -1,3 +1,6 @@
+// Copyright 2022-2024 Dag Arne Osvik
+// Copyright 2022-2024 Luan Cardoso dos Santos
+
 use std::path::Path;
 
 fn main() {
@@ -10,7 +13,7 @@ fn main() {
     // Find all CUDA files recursively within the CLAD directory
     let mut cuda_files = find_cuda_files(clad_dir);
     
-    if cfg!(feature="msm_primitive_test") {
+    if cfg!(feature="primitive_test") {
         cuda_files.append(&mut find_cuda_files(Path::new("src/CLAD/tests"))); //TODO: Update to run tests without the feature(basic tests only)
     }
     // Compile each CUDA file individually
@@ -23,7 +26,7 @@ fn main() {
     nvcc.include(clad_include_dir);
     nvcc.include(clad_include_ptx_dir);
 
-    if cfg!(feature="msm_primitive_test"){ 
+    if cfg!(feature="primitive_test"){ 
         let clad_test_include_dir = Path::new("src/CLAD/tests/include");
         nvcc.include(clad_test_include_dir);
         nvcc.define("RUST_TEST", None);

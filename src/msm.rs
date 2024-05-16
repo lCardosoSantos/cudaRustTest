@@ -1,3 +1,7 @@
+
+// Copyright 2022-2024 Dag Arne Osvik
+// Copyright 2022-2024 Luan Cardoso dos Santos
+
 use std::ops::{Index, IndexMut};
 
 //for testing

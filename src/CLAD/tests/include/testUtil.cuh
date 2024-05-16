@@ -1,3 +1,5 @@
+// Copyright 2022-2024 Dag Arne Osvik
+// Copyright 2022-2024 Luan Cardoso dos Santos
 #pragma once
 
 #include <stdio.h>
@@ -70,7 +72,7 @@ extern __managed__ bool pass;
 
 #define TEST_EPILOGUE \
     if (count > 0 && verbosity >= PRINT_MESSAGES && !errorOnce){\
-        printf("%u of %u  tests failed\n", count, testsize);\
+        printf("%lu of %lu  tests failed\n", count, testsize);\
     }\
     result = pass;
 

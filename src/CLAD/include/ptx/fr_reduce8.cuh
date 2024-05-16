@@ -1,6 +1,6 @@
-// Finite Field Arithmetic for BN254
 // Copyright 2022-2024 Dag Arne Osvik
 // Copyright 2022-2024 Luan Cardoso dos Santos
+// Finite Field Arithmetic for BN254
 
 #ifndef FR_REDUCE8_CUH
 #define FR_REDUCE8_CUH

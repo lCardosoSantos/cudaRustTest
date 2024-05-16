@@ -39,6 +39,26 @@ __device__ void fr_t::to_mont(uint64_t &z0, uint64_t &z1, uint64_t &z2, uint64_t
     fr_redc(z0, z1, z2, z3, z4, z5, z6, z7);
 }
 
+__device__ void fr_t::to_mont(fr_t &z)
+{
+    uint64_t z0, z1, z2, z3, z4, z5, z6, z7;
+    z0 = z[0]; z1 = z[1]; z2 = z[2]; z3 = z[3];
+
+    // Multiply by R^2 mod r = 2^512 mod r
+
+    mul256(
+        z0, z1, z2, z3, z4, z5, z6, z7,
+        z0, z1, z2, z3,
+        0x1BB8E645AE216DA7,
+        0x53FE3AB1E35C59E3,
+        0x8C49833D53BB8085,
+        0x0216D0B17F4E44A5
+    );
+
+    fr_redc(z0, z1, z2, z3, z4, z5, z6, z7);
+}
+
+
 __device__ void fr_t::from_mont(uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3)
 {
     uint64_t z0, z1, z2, z3, z4, z5, z6, z7;
@@ -47,6 +67,28 @@ __device__ void fr_t::from_mont(uint64_t x0, uint64_t x1, uint64_t x2, uint64_t 
     z1 = x1;
     z2 = x2;
     z3 = x3;
+    z4 = 0;
+    z5 = 0;
+    z6 = 0;
+    z7 = 0;
+
+    fr_redc(z0, z1, z2, z3, z4, z5, z6, z7);
+    fr_reduce4(z0, z1, z2, z3, z0, z1, z2, z3);
+
+    _[0] = z0;
+    _[1] = z1;
+    _[2] = z2;
+    _[3] = z3;
+}
+
+__device__ void fr_t::from_mont(fr_t  x)
+{
+    uint64_t z0, z1, z2, z3, z4, z5, z6, z7;
+
+    z0 = x[0];
+    z1 = x[1];
+    z2 = x[2];
+    z3 = x[3];
     z4 = 0;
     z5 = 0;
     z6 = 0;

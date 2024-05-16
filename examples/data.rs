@@ -1,3 +1,6 @@
+// Copyright 2022-2024 Dag Arne Osvik
+// Copyright 2022-2024 Luan Cardoso dos Santos
+
 use std::ffi::c_void;
 use std::{
     fs::{self, File},

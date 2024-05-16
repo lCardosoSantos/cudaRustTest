@@ -1,3 +1,5 @@
+// Copyright 2022-2024 Dag Arne Osvik
+// Copyright 2022-2024 Luan Cardoso dos Santos
 #include "fr.cuh" 
 
 __host__ void field_printh(const char *s, const fr_t &x, FILE *out){

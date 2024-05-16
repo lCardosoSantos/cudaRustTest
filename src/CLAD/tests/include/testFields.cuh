@@ -1,3 +1,5 @@
+// Copyright 2022-2024 Dag Arne Osvik
+// Copyright 2022-2024 Luan Cardoso dos Santos
 #ifndef FP_TEST_CUH
 #define FP_TEST_CUH
 
