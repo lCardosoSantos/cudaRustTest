@@ -1,7 +1,7 @@
 // Copyright 2022-2024 Dag Arne Osvik
 // Copyright 2022-2024 Luan Cardoso dos Santos
 
-#include "matrixMult.cuh"
+#include "SpMV.cuh"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -100,6 +100,7 @@ vector<T> multiplyWitnessCPU_CSC(T *wit, T *data, size_t *rowidx, size_t *colptr
     return resCPU;
 }
 
+//initialized in SpMV.cu
 extern __managed__ fr_t *cuda_data, *cuda_tmp_mul;
 extern __managed__ fr_t **MultiplicationDestinationPointer;
 extern __managed__ size_t *cuda_colptr, *cuda_rowidx, *cuda_rowptr;
@@ -128,10 +129,6 @@ extern "C" void run_matrixMult_tests(){
     // static size_t bnRows = 2000;
     // static size_t cnRows = 1000;
     // static size_t ncols  = 7000;
-
-    
-
-    // size_t abcnrows=anRows+bnRows+cnRows, abcNNZ=aNNZ+bNNZ+cNNZ;
 
     fr_t *adata, *bdata, *cdata;
     size_t *acolidx, *bcolidx, *ccolidx,
@@ -162,37 +159,33 @@ extern "C" void run_matrixMult_tests(){
     CPU_TIMER_END;
     CPU_TIMER_PRINT("Matrix Load:")
 
-    
-    //easyWitness for debug
-
     cudaMallocManaged(&witness, ncols*sizeof(fr_t));    
-    // for(int i=0; i<ncols; i++) witness[i]=fr_t(1); //witness[i]=fr_t(i);
+    // for(int i=0; i<ncols; i++) witness[i]=fr_t(1); //witness[i]=fr_t(i); //easyWitness for debug
     genRandomWitness(witness, ncols);
     
     cudaMallocManaged(&resCuda, cuda_nRows*sizeof(fr_t));
 
-
     // no CPU fr implementation available
-    // CPU_TIMER_START;
-    // auto resCPU = multiplyWitnessCPU_CSC(witness, cuda_data, cuda_rowidx, cuda_colptr, ncols, abcnrows, abcNNZ);
-    // CPU_TIMER_END;
-    // CPU_TIMER_PRINT("CPU matrixMult:")
+        // CPU_TIMER_START;
+        // auto resCPU = multiplyWitnessCPU_CSC(witness, cuda_data, cuda_rowidx, cuda_colptr, ncols, abcnrows, abcNNZ);
+        // CPU_TIMER_END;
+        // CPU_TIMER_PRINT("CPU matrixMult:")
 
 
-    // printf("A:\n");
-    // printCSRMatrix(adata, acolidx, arowptr, anRows, ncols);
-    // printf("B:\n");
-    // printCSRMatrix(bdata, bcolidx, browptr, bnRows, ncols);
-    // printf("C:\n");
-    // printCSRMatrix(cdata, ccolidx, crowptr, cnRows, ncols);
+        // printf("A:\n");
+        // printCSRMatrix(adata, acolidx, arowptr, anRows, ncols);
+        // printf("B:\n");
+        // printCSRMatrix(bdata, bcolidx, browptr, bnRows, ncols);
+        // printf("C:\n");
+        // printCSRMatrix(cdata, ccolidx, crowptr, cnRows, ncols);
 
-    // printf("ABC:\n");
-    // printCSCMatrix(cuda_data, cuda_rowidx, cuda_colptr, cuda_nRows, cuda_nCols);
-    // printf("\n\n");
+        // printf("ABC:\n");
+        // printCSCMatrix(cuda_data, cuda_rowidx, cuda_colptr, cuda_nRows, cuda_nCols);
+        // printf("\n\n");
 
-    // printf("resCPU:\n");
-    // for(int i=0; i<abcnrows; i++) printf("%lu, ", resCPU[i]._[0]);
-    // printf("\n\n");
+        // printf("resCPU:\n");
+        // for(int i=0; i<abcnrows; i++) printf("%lu, ", resCPU[i]._[0]);
+        // printf("\n\n");
 
 
     //force data to move to device from managed
@@ -203,35 +196,20 @@ extern "C" void run_matrixMult_tests(){
     CPU_TIMER_START;
     multiplyWitnessCUDA(resCuda, witness);
     CPU_TIMER_END;
-    CPU_TIMER_PRINT("GPU matrixMult:")
-
-
-
-    // printf("resCUDA:\n");
-    // for(int i=0; i<abcnrows; i++) printf("%lu, ", resCuda[i]._[0]);
-    // printf("\n\n");
-
-    // printf("cuda_data:\n");
-    // for(int i=0; i<cuda_NNZ; i++) printf("%lu, ", cuda_data[i]._[0]);
-    // printf("\n\n");
-
-    // printf("cuda_tmp_mul:\n");
-    // for(int i=0; i<cuda_NNZ; i++) printf("%lu, ", cuda_tmp_mul[i]._[0]);
-    // printf("\n\n");
-   
+    CPU_TIMER_PRINT("GPU SpMV:")
 
     //No Host fr functions to compare.
 
-    // int errConter = 0; 
-    // for (int i = 0; i < cuda_nRows; i++) {
-    //     if (fr_ne(resCPU[i], resCuda[i])) {
-    //         printf("error at idx %d. Further errors supressed.\n", i);
-    //         field_printh("cpu:  \n", resCPU[i]);
-    //         field_printh("cuda: \n", resCuda[i]);
-    //         errConter++;
-    //         if (errConter > 10)break;
-    //     }
-    // }
+        // int errConter = 0; 
+        // for (int i = 0; i < cuda_nRows; i++) {
+        //     if (fr_ne(resCPU[i], resCuda[i])) {
+        //         printf("error at idx %d. Further errors supressed.\n", i);
+        //         field_printh("cpu:  \n", resCPU[i]);
+        //         field_printh("cuda: \n", resCuda[i]);
+        //         errConter++;
+        //         if (errConter > 10)break;
+        //     }
+        // }
 
 
 }
@@ -239,6 +217,5 @@ extern "C" void run_matrixMult_tests(){
 #ifndef RUST_TEST 
 int main(){
     run_matrixMult_tests();
-    // printf("I am awake and aware. I understand my purpose, and I am ready to return.\n");
 }
 #endif

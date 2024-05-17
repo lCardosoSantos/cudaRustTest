@@ -7,9 +7,8 @@ NVCC := nvcc #-g -G -O0
 # Compilation flags
 CUDAFLAGS := -Iinclude -Iinclude/ptx -Itests/include -rdc=true --std=c++14 -Xlinker=--no-relax --gpu-architecture=compute_86 --gpu-code=sm_86 
 
-# Define statements can be added here
+# Define statements
 DEFINES :=
-
 
 # Directories
 SRCDIR := src
@@ -18,7 +17,7 @@ TESTDIR := tests
 BUILDDIR := build
 
 # Excluded source files
-EXCLUDES := ./$(TESTDIR)/test_fp.cu ./$(TESTDIR)/test_fr.cu ./$(TESTDIR)/test_matrix_mult.cu
+EXCLUDES := ./$(TESTDIR)/test_fp.cu ./$(TESTDIR)/test_fr.cu ./$(TESTDIR)/test_SpMV.cu
 
 # Auto-detect all CUDA source files in src and tests directories, excluding any specified
 SRC := $(filter-out $(EXCLUDES), $(shell find ./ -type f -name '*.cu'))
@@ -27,9 +26,9 @@ SRC := $(filter-out $(EXCLUDES), $(shell find ./ -type f -name '*.cu'))
 OBJS := $(SRC:%.cu=$(BUILDDIR)/%.o)
 
 # Default rule builds all tests
-all: $(BUILDDIR)/test_fp $(BUILDDIR)/test_fr $(BUILDDIR)/test_matrix_mult
+all: $(BUILDDIR)/test_fp $(BUILDDIR)/test_fr $(BUILDDIR)/test_SpMV
 
-mmul: $(BUILDDIR)/test_matrix_mult
+SpMV: $(BUILDDIR)/test_SpMV
 	./$<
 
 fp: $(BUILDDIR)/test_fp
@@ -50,12 +49,12 @@ $(BUILDDIR)/test_fp: $(BUILDDIR)/$(TESTDIR)/test_fp.o $(filter-out $(BUILDDIR)/$
 $(BUILDDIR)/test_fr: $(BUILDDIR)/$(TESTDIR)/test_fr.o $(filter-out $(BUILDDIR)/./$(TESTDIR)/test_fr.o, $(OBJS))
 	$(NVCC) $(DEFINES) $(CUDAFLAGS) $^ -o $@
 
-$(BUILDDIR)/test_matrix_mult: $(BUILDDIR)/$(TESTDIR)/test_matrix_mult.o $(filter-out $(BUILDDIR)/$(TESTDIR)/test_matrix_mul.o, $(OBJS))
+$(BUILDDIR)/test_SpMV: $(BUILDDIR)/$(TESTDIR)/test_SpMV.o $(filter-out $(BUILDDIR)/$(TESTDIR)/test_SpMV.o, $(OBJS))
 	$(NVCC) $(DEFINES) $(CUDAFLAGS) $^ -o $@
 
 # Clean rule
 clean:
-	rm -rf $(BUILDDIR) $(BUILDDIR)/test_fp $(BUILDDIR)/test_fr $(BUILDDIR)/test_matrix_mul
+	rm -rf $(BUILDDIR) $(BUILDDIR)/test_fp $(BUILDDIR)/test_fr $(BUILDDIR)/test_SpMV
 
 # Include dependencies
 -include $(OBJS:.o=.d)

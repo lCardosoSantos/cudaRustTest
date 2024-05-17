@@ -30,7 +30,7 @@ __managed__ size_t *cuda_colptr, *cuda_rowidx, *cuda_rowptr; //TODO: I have an i
 __managed__ size_t cuda_NNZ, cuda_nRows, cuda_nCols;
 size_t ANROWS, BNROWS, CNROWS; //need to keep track for separating the witness pointers
 
-bool cuda_matrix_multiplication_ready = false;
+bool cuda_SpMV_ready = false;
 
 template<typename T, typename S>
 void sparseMatrixLoad(const T *A_data, const S *A_colidx, const S *A_indptr, const S A_NNZ, const S A_nRows, 
@@ -133,7 +133,7 @@ void sparseMatrixLoad(const T *A_data, const S *A_colidx, const S *A_indptr, con
     free(tmp);
 
     //// set load flag
-    cuda_matrix_multiplication_ready = true;
+    cuda_SpMV_ready = true;
 }
 
 template<typename T>
@@ -283,7 +283,7 @@ void multiplyWitness(T *res, T *witness){
     cudaError_t err;
 
     //check if matrices and memory is allocated.
-    if(!cuda_matrix_multiplication_ready) return; 
+    if(!cuda_SpMV_ready) return; 
 
 
     // CPU_TIMER_INIT;
@@ -301,6 +301,7 @@ void multiplyWitness(T *res, T *witness){
 
 extern "C"
 void multiplyWitnessCUDA(fr_t *res, fr_t *witness){
+    //Consider that res has been alocated with lenght for the three results. Result is concatenated in order A*w||B*w||C*w 
     multiplyWitness<fr_t>(res, witness);
 }
 
@@ -320,7 +321,7 @@ void sparseMatrixLoadCUDA(const fr_t *A_data, const size_t *A_colidx, const size
 extern "C"
 void freeManagedMatrix(){
     // frees all the allocated memory
-    if (cuda_matrix_multiplication_ready == true){
+    if (cuda_SpMV_ready == true){
         cudaFree(cuda_data);
         cudaFree(cuda_tmp_mul);
         cudaFree(MultiplicationDestinationPointer);
@@ -328,8 +329,4 @@ void freeManagedMatrix(){
         cudaFree(cuda_rowidx);
         cudaFree(cuda_rowptr);
     }
-    //todo
 }
-
-
-/////////////////////DEBUG STUFF//////////////////////
